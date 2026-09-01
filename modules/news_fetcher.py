@@ -176,10 +176,12 @@ def fetch_from_guardian_api(query_string: str, api_key: str, max_results: int = 
             pub_date = item.get("webPublicationDate", "")
             section = item.get("sectionName", "The Guardian")
 
+            byline = fields.get("byline", "") or "The Guardian Staff"
             standardized.append({
                 "title": title,
                 "source": "The Guardian",
                 "source_badge": "Guardian",
+                "author": byline,
                 "url": article_url,
                 "text": clean_trail if clean_trail else title,
                 "published_at": pub_date,
@@ -352,10 +354,12 @@ def fetch_from_news_api(query_string: str, api_key: str, max_results: int = 8) -
 
             full_snippet = f"{article_description} {article_content}".strip()
 
+            author_name = item.get("author") or article_source_name
             standardized_articles.append({
                 "title": article_title,
                 "source": article_source_name,
                 "source_badge": "NewsAPI",
+                "author": author_name,
                 "url": article_url,
                 "text": full_snippet if full_snippet else article_title,
                 "published_at": published_timestamp,
@@ -412,6 +416,7 @@ def fetch_from_gnews_io(query_string: str, api_key: str, max_results: int = 8) -
                 "title": article_title,
                 "source": article_source_name,
                 "source_badge": "GNews",
+                "author": article_source_name,
                 "url": article_url,
                 "text": full_snippet if full_snippet else article_title,
                 "published_at": published_timestamp,
@@ -460,6 +465,8 @@ def fetch_from_newsdata_io(query_string: str, api_key: str, max_results: int = 8
             article_content = item.get("content", "") or ""
             article_url = item.get("link", "")
             published_timestamp = item.get("pubDate", "")
+            creator = item.get("creator")
+            author_name = ", ".join(creator) if isinstance(creator, list) and creator else source_name
 
             full_snippet = f"{article_description} {article_content}".strip()
 
@@ -467,6 +474,7 @@ def fetch_from_newsdata_io(query_string: str, api_key: str, max_results: int = 8
                 "title": article_title,
                 "source": source_name,
                 "source_badge": "NewsData",
+                "author": author_name,
                 "url": article_url,
                 "text": full_snippet if full_snippet else article_title,
                 "published_at": published_timestamp,
@@ -530,6 +538,7 @@ def fetch_from_worldnews_api(query_string: str, api_key: str, max_results: int =
             article_text = item.get("text", "") or ""
             article_summary = item.get("summary", "") or ""
             published_timestamp = item.get("publish_date", "")
+            author_name = item.get("author") or domain_name
 
             full_snippet = f"{article_summary} {article_text}".strip()[:300]
 
@@ -537,6 +546,7 @@ def fetch_from_worldnews_api(query_string: str, api_key: str, max_results: int =
                 "title": article_title,
                 "source": domain_name,
                 "source_badge": "WorldNews",
+                "author": author_name,
                 "url": article_url,
                 "text": full_snippet if full_snippet else article_title,
                 "published_at": published_timestamp,

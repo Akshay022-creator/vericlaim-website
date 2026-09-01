@@ -25,7 +25,6 @@
             heading: ['Outfit', 'sans-serif'],
           },
           animation: {
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             'ticker': 'ticker 35s linear infinite',
           },
           keyframes: {
@@ -77,7 +76,7 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans transition-colors duration-200">
 
   <!-- ========================================================================= -->
-  <!-- SIMPLE TOP NAVIGATION -->
+  <!-- TOP NAVIGATION -->
   <!-- ========================================================================= -->
   <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -131,7 +130,7 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- SIMPLE LIVE TICKER -->
+  <!-- LIVE TRENDING TICKER -->
   <!-- ========================================================================= -->
   <div class="bg-slate-900 text-slate-300 text-xs py-2 ticker-wrap border-b border-slate-800 flex items-center">
     <div class="px-3 bg-indigo-600 text-white font-bold text-[10px] py-0.5 rounded-r-md flex-shrink-0 z-10 mr-3">
@@ -176,7 +175,7 @@
       </h1>
 
       <p class="text-slate-600 dark:text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
-        VeriClaim instantly searches <b>The Guardian, NewsAPI, BBC, Currents, and other major news outlets</b> at the same time to see if the story is confirmed and if the numbers match.
+        VeriClaim instantly searches <b>The Guardian, NewsAPI, BBC, Currents, and other major news outlets</b> at the same time to see when it was published, who wrote it, and if the facts match.
       </p>
 
       <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -212,7 +211,7 @@
         <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
           <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center mx-auto text-sm">2</div>
           <h3 class="font-bold text-slate-900 dark:text-white text-sm">We Search 7 News Outlets</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">We check real-time wire reporting from The Guardian, BBC, Reuters, and more.</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">We fetch the publication date, author byline, and reporting from top newsrooms.</p>
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
@@ -226,7 +225,7 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 2: SIMPLE & CLEAN CHECK NEWS VERIFIER -->
+  <!-- PAGE 2: CHECK NEWS VERIFIER -->
   <!-- ========================================================================= -->
   <div id="page-verifier" class="page-container flex-grow hidden">
     
@@ -287,7 +286,7 @@
           <i class="fa-solid fa-circle-notch"></i>
         </div>
         <h3 class="text-base font-bold text-slate-900 dark:text-white">Searching 7 Major News Services...</h3>
-        <p class="text-xs text-slate-400">Checking Guardian, BBC, Reuters, and independent reporting wires...</p>
+        <p class="text-xs text-slate-400">Fetching publication dates, authors, and news reports...</p>
       </div>
 
       <!-- Results Area -->
@@ -326,12 +325,15 @@
 
             <!-- Verdict Text -->
             <div class="space-y-2 text-center sm:text-left flex-grow">
-              <div class="flex items-center justify-center sm:justify-start gap-2">
+              <div class="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                 <span id="verdictBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                   Verified True
                 </span>
                 <span id="sourceCountTag" class="text-xs text-slate-500 font-medium">
                   Found in 4 News Outlets
+                </span>
+                <span id="confidenceBadge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  High Confidence
                 </span>
               </div>
 
@@ -342,6 +344,18 @@
               <p id="narrativeText" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
                 Explanation will appear here...
               </p>
+
+              <!-- Quick Action Share & Copy Bar -->
+              <div class="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                <button onclick="copyVerdictSummary()" id="copyVerdictBtn" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition-colors">
+                  <i class="fa-regular fa-copy"></i>
+                  <span>Copy Verdict</span>
+                </button>
+                <button onclick="shareOnWhatsApp()" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 font-semibold flex items-center gap-1.5 transition-colors">
+                  <i class="fa-brands fa-whatsapp"></i>
+                  <span>Share</span>
+                </button>
+              </div>
             </div>
 
           </div>
@@ -363,7 +377,7 @@
             </button>
           </div>
 
-          <!-- TAB 1: News Articles -->
+          <!-- TAB 1: News Articles with Date & Author -->
           <div id="tabContent-articles" class="p-6">
             <div id="articlesList" class="space-y-3">
               <!-- Populated by JS -->
@@ -480,7 +494,7 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 4: HOW IT WORKS (SIMPLE & EASY TO EXPLAIN) -->
+  <!-- PAGE 4: HOW IT WORKS -->
   <!-- ========================================================================= -->
   <div id="page-about" class="page-container flex-grow hidden">
     <section class="max-w-3xl mx-auto px-4 py-10 space-y-6">
@@ -492,12 +506,12 @@
       <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 text-sm leading-relaxed">
         <h3 class="font-bold text-base text-slate-900 dark:text-white">1. Live News Search</h3>
         <p class="text-slate-600 dark:text-slate-400 text-xs">
-          When you enter a claim, we simultaneously search 7 global news wire services (The Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, and WorldNews) to find all recent stories about that topic.
+          When you enter a claim, we simultaneously search 7 global news wire services (The Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, and WorldNews) to find recent stories about that topic.
         </p>
 
-        <h3 class="font-bold text-base text-slate-900 dark:text-white">2. Story & Detail Comparison</h3>
+        <h3 class="font-bold text-base text-slate-900 dark:text-white">2. Date & Author Verification</h3>
         <p class="text-slate-600 dark:text-slate-400 text-xs">
-          We compare what the news articles actually say against your submitted headline. If multiple trusted outlets report the same event, the score goes up.
+          We identify when each story was published and who wrote it (e.g. journalist byline or news agency desk) so you can tell if a story is breaking news or an old rumor resurfacing.
         </p>
 
         <h3 class="font-bold text-base text-slate-900 dark:text-white">3. Catching Exaggerated Numbers</h3>
@@ -519,7 +533,7 @@
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- SIMPLE CLIENT SCRIPT -->
+  <!-- CLIENT SCRIPT -->
   <!-- ========================================================================= -->
   <script>
     const PRESETS = {
@@ -574,6 +588,29 @@
       if (PRESETS[key]) {
         document.getElementById('headlineInput').value = PRESETS[key];
         runVerification();
+      }
+    }
+
+    // Helper: Formats Date nicely (e.g. "March 15, 2026", "2 days ago", or "Recent")
+    function formatPublicationDate(dateStr) {
+      if (!dateStr) return { formatted: "Recently Published", isRecent: true };
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) {
+          return { formatted: dateStr.slice(0, 16), isRecent: true };
+        }
+        
+        const now = new Date();
+        const diffHours = Math.round((now - d) / (1000 * 60 * 60));
+        
+        if (diffHours < 24 && diffHours >= 0) {
+          return { formatted: `${Math.max(1, diffHours)}h ago`, isRecent: true };
+        }
+        
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        return { formatted: d.toLocaleDateString('en-US', options), isRecent: diffHours < 72 };
+      } catch (e) {
+        return { formatted: dateStr.slice(0, 10), isRecent: false };
       }
     }
 
@@ -649,9 +686,22 @@
       const sourceCount = (data.distinct_sources || []).length;
       document.getElementById('sourceCountTag').textContent = `Found in ${sourceCount} independent newsroom${sourceCount === 1 ? '' : 's'}`;
 
+      // Confidence badge
+      const confBadge = document.getElementById('confidenceBadge');
+      if (sourceCount >= 3 && score >= 70) {
+        confBadge.textContent = "High Confidence";
+        confBadge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800";
+      } else if (sourceCount >= 1 && score >= 40) {
+        confBadge.textContent = "Moderate Confidence";
+        confBadge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
+      } else {
+        confBadge.textContent = "Low Confidence";
+        confBadge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800";
+      }
+
       document.getElementById('articlesCount').textContent = (data.articles || []).length;
 
-      // Render Articles
+      // Render Articles with Date & Author
       renderArticles(data.articles || []);
       // Render Facts
       renderFacts(data.fact_check);
@@ -683,17 +733,43 @@
       }
 
       articles.forEach(art => {
+        const dateInfo = formatPublicationDate(art.published_at);
+        const author = art.author || art.source || "Newsroom Desk";
+
         container.innerHTML += `
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
-            <div class="flex items-center justify-between text-[11px]">
-              <span class="font-bold text-indigo-600 dark:text-indigo-400">${art.source}</span>
-              <span class="text-slate-400">${art.source_badge || 'News Wire'}</span>
+          <div class="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+            
+            <!-- Metadata: Publisher, Author, Date -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-bold text-indigo-600 dark:text-indigo-400">
+                  <i class="fa-solid fa-newspaper text-[10px] mr-1"></i>${art.source}
+                </span>
+                <span class="text-slate-400">•</span>
+                <span class="text-slate-600 dark:text-slate-300 font-medium">
+                  <i class="fa-regular fa-user text-[10px] mr-1 text-slate-400"></i>${author}
+                </span>
+              </div>
+
+              <!-- Date Badge -->
+              <div class="flex items-center gap-1.5 text-[11px] font-semibold ${dateInfo.isRecent ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}">
+                <i class="fa-regular fa-calendar text-[10px]"></i>
+                <span>${dateInfo.formatted}</span>
+              </div>
             </div>
-            <h4 class="font-bold text-xs text-slate-900 dark:text-white">${art.title}</h4>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${art.text}</p>
+
+            <!-- Title & Snippet -->
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">${art.title}</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">${art.text}</p>
+            
+            <!-- Direct Link -->
             ${art.url && art.url !== '#' ? `
-              <div class="pt-1">
-                <a href="${art.url}" target="_blank" class="text-[10px] font-semibold text-indigo-600 hover:underline">Read original article →</a>
+              <div class="pt-1 flex items-center justify-between text-[11px]">
+                <a href="${art.url}" target="_blank" rel="noopener noreferrer" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                  <span>Read full story on ${art.source}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+                <span class="text-[10px] text-slate-400">Via ${art.source_badge || 'News Wire'}</span>
               </div>
             ` : ''}
           </div>
@@ -725,6 +801,25 @@
       const factMod = breakdown.fact_modifier || 0;
       document.getElementById('scoreFactsPts').textContent = `${factMod >= 0 ? '+' : ''}${factMod} pts`;
       document.getElementById('scoreFactsPts').className = `font-mono font-bold text-sm ${factMod < 0 ? 'text-red-600' : 'text-emerald-600'}`;
+    }
+
+    // Share & Copy Helpers
+    function copyVerdictSummary() {
+      if (!currentData) return;
+      const text = `🔍 VeriClaim Fact Check:\nClaim: "${currentData.headline}"\nVerdict: ${currentData.category} (${currentData.score}/100)\n${currentData.explanation}`;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyVerdictBtn');
+        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> <span>Copied!</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy Verdict</span>';
+        }, 2000);
+      });
+    }
+
+    function shareOnWhatsApp() {
+      if (!currentData) return;
+      const text = encodeURIComponent(`🔍 VeriClaim Fact Check:\nClaim: "${currentData.headline}"\nVerdict: ${currentData.category} (${currentData.score}/100)\n${currentData.explanation}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
   </script>
 </body>
