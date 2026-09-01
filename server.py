@@ -25,7 +25,7 @@ import os
 import json
 import time
 from pathlib import Path
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
 
 # Add parent directory to path so modules can be imported
@@ -101,15 +101,18 @@ class HeadlineCheckerAPIHandler(SimpleHTTPRequestHandler):
 
     def _send_json_response(self, data: dict, status_code: int = 200):
         """Sends a formatted JSON response with CORS headers."""
-        response_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
-        self.send_response(status_code)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(response_bytes)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-        self.wfile.write(response_bytes)
+        try:
+            response_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
+            self.send_response(status_code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(response_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.end_headers()
+            self.wfile.write(response_bytes)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def do_OPTIONS(self):
         """Handle CORS pre-flight requests."""
@@ -288,7 +291,7 @@ class HeadlineCheckerAPIHandler(SimpleHTTPRequestHandler):
 def start_server(port: int = 8000):
     """Starts the HTTP server on specified port."""
     server_address = ("", port)
-    httpd = HTTPServer(server_address, HeadlineCheckerAPIHandler)
+    httpd = ThreadingHTTPServer(server_address, HeadlineCheckerAPIHandler)
     print("=" * 75)
     print("  VERICLAIM — 7-PROVIDER REAL-TIME NEWS CROSS-VERIFICATION SERVER")
     print(f"  * Website URL: http://localhost:{port}")

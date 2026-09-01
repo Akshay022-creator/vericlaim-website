@@ -1,17 +1,15 @@
 """
-Accurate & Calibrated Trust Score Calculator
---------------------------------------------
+Accurate & Stance-Aware Trust Score Calculator
+----------------------------------------------
 PURPOSE:
-Accurately scores news claims from 0 to 100 while eliminating false positives
-on fabricated claims (e.g. "Elon Musk buys Google" -> 0 to 15 / 100 False).
-
-Scoring Rules:
-1. Genuine Match Gate: An article only counts as supporting if similarity >= 0.40.
-2. Low Top Match Cap:
+Accurately scores news claims from 0 to 100 with stance & debunk awareness:
+1. Debunk / Fact-Check Override:
+   If a news outlet explicitly published a fact-check debunking the claim,
+   the score is immediately 0/100 (Debunked False).
+2. Genuine Match Gate: An article only counts as supporting if similarity >= 0.35 and stance == 'supporting'.
+3. Low Top Match Cap:
    - Top match < 0.25 -> Score strictly capped at 0 - 15 (False / Misleading).
    - Top match < 0.45 -> Score strictly capped at 20 - 35 (Unverified).
-3. Verified True requires:
-   - High top match (>= 0.55) AND confirmed across 2+ independent outlets.
 """
 
 from typing import List, Dict, Any
@@ -35,6 +33,7 @@ def compute_corroboration_score(
             ),
             "match_count": 0,
             "distinct_sources": [],
+            "debunked": False,
             "component_breakdown": {
                 "similarity_points": 0,
                 "coverage_points": 0,
@@ -43,13 +42,40 @@ def compute_corroboration_score(
             }
         }
 
-    top_match = similarity_results[0].get("similarity_score", 0.0) if similarity_results else 0.0
+    # Check for active debunks
+    debunk_articles = [
+        art for art in similarity_results
+        if art.get("stance") == "debunking" and art.get("similarity_score", 0.0) >= 0.30
+    ]
 
-    # ONLY count articles that actually match the story (similarity >= 0.35)
+    if debunk_articles:
+        debunk_source = debunk_articles[0].get("source", "Major Fact-Checkers")
+        debunk_title = debunk_articles[0].get("title", "")
+        return {
+            "score": 0,
+            "category": "Debunked False",
+            "explanation": (
+                f"⚠️ Actively Debunked: {debunk_source} published a fact-check refuting this claim "
+                f"('{debunk_title}')."
+            ),
+            "match_count": len(debunk_articles),
+            "distinct_sources": [debunk_source],
+            "debunked": True,
+            "component_breakdown": {
+                "similarity_points": 0,
+                "coverage_points": 0,
+                "depth_points": 0,
+                "fact_modifier": -100
+            }
+        }
+
+    # Filter for genuinely supporting articles
     genuinely_matching_articles = [
         art for art in similarity_results
-        if art.get("similarity_score", 0.0) >= 0.35
+        if art.get("similarity_score", 0.0) >= 0.35 and art.get("stance") != "debunking"
     ]
+
+    top_match = genuinely_matching_articles[0].get("similarity_score", 0.0) if genuinely_matching_articles else 0.0
 
     # Collect distinct news outlets that actually confirm the story
     confirming_sources = list({
@@ -71,6 +97,7 @@ def compute_corroboration_score(
             ),
             "match_count": 0,
             "distinct_sources": [],
+            "debunked": False,
             "component_breakdown": {
                 "similarity_points": round(top_match * 20, 1),
                 "coverage_points": 0,
@@ -121,7 +148,7 @@ def compute_corroboration_score(
     else:
         final_score = int(max(0, min(100, round(total_raw))))
 
-    # Simple, clear status names
+    # Status category assignment
     if final_score >= 75:
         category = "Verified True"
         summary = "Confirmed by multiple trusted news outlets."
@@ -154,6 +181,7 @@ def compute_corroboration_score(
         "explanation": narrative,
         "match_count": len(genuinely_matching_articles),
         "distinct_sources": confirming_sources,
+        "debunked": False,
         "component_breakdown": {
             "similarity_points": round(story_match_points, 1),
             "coverage_points": round(source_points, 1),

@@ -706,27 +706,30 @@ def fetch_related_articles(
                     future = executor.submit(fetch_func, query, key, 6)
                     future_to_provider[future] = (name, pid, start_t)
 
-            for future in as_completed(future_to_provider):
-                name, pid, start_t = future_to_provider[future]
-                elapsed_ms = int((time.time() - start_t) * 1000)
-                try:
-                    results = future.result() or []
-                    if results:
-                        telemetry["providers_responding"] += 1
-                        aggregated_articles.extend(results)
-                    telemetry["provider_details"][pid] = {
-                        "name": name,
-                        "status": "online" if results else "no_results",
-                        "latency_ms": elapsed_ms,
-                        "articles_found": len(results)
-                    }
-                except Exception as err:
-                    telemetry["provider_details"][pid] = {
-                        "name": name,
-                        "status": f"error: {str(err)[:30]}",
-                        "latency_ms": elapsed_ms,
-                        "articles_found": 0
-                    }
+            try:
+                for future in as_completed(future_to_provider, timeout=4.5):
+                    name, pid, start_t = future_to_provider[future]
+                    elapsed_ms = int((time.time() - start_t) * 1000)
+                    try:
+                        results = future.result() or []
+                        if results:
+                            telemetry["providers_responding"] += 1
+                            aggregated_articles.extend(results)
+                        telemetry["provider_details"][pid] = {
+                            "name": name,
+                            "status": "online" if results else "no_results",
+                            "latency_ms": elapsed_ms,
+                            "articles_found": len(results)
+                        }
+                    except Exception as err:
+                        telemetry["provider_details"][pid] = {
+                            "name": name,
+                            "status": f"error: {str(err)[:30]}",
+                            "latency_ms": elapsed_ms,
+                            "articles_found": 0
+                        }
+            except Exception:
+                pass
 
     total_time_ms = int((time.time() - start_total_time) * 1000)
     telemetry["query_time_ms"] = total_time_ms
