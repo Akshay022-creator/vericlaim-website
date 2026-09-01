@@ -1,15 +1,17 @@
 """
-Similarity Engine Module (Hybrid TF-IDF & Semantic Alignment)
+Module 3: Hybrid TF-IDF & Semantic Similarity Engine
+-----------------------------------------------------
+PURPOSE (Easy to explain in an interview or presentation):
+This module computes how mathematically similar each retrieved news article is to the user's claim.
 
-This module measures how closely each candidate news article matches the user's headline.
-Instead of treating short headlines and long news articles as identical vector sizes,
-it uses a hybrid semantic model combining:
-1. Title-to-Title TF-IDF Cosine Similarity (high precision matching of core events)
-2. Title-to-Content TF-IDF Cosine Similarity (broad context and thematic overlap)
-3. Keyword Overlap & Concept Recall (ratio of key claim entities present in coverage)
+Why Hybrid TF-IDF instead of basic string matching?
+A short headline and a 500-word news article naturally have different lengths.
+Our hybrid formula balances three distinct components:
+1. Title-to-Title TF-IDF Cosine Similarity (High-precision matching of the core event)
+2. Title-to-FullContent TF-IDF Cosine Similarity (Thematic and background overlap)
+3. Concept/Entity Recall (Checks what percentage of key claim words appear in the reporting)
 
-This produces accurate, realistic corroboration scores for both live breaking news
-and archived reference datasets.
+Final Calibrated Score: Normalized to a clean 0.00 to 1.00 scale.
 """
 
 import re
@@ -21,28 +23,20 @@ from modules.keyword_extractor import ENGLISH_STOP_WORDS
 
 def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
-    Compares the user's headline against a list of news articles and scores each one.
-
-    Think of this like a journalist cross-referencing wire reports:
-    - First, checks if the headline titles describe the same core event.
-    - Next, checks if the article body contains the key entities and facts.
-    - Finally, balances both into a normalized semantic similarity score (0.00 to 1.00).
+    Compares the claim against each candidate article and calculates a semantic similarity score.
 
     Input:
-        headline (str): The claim or headline the user typed in.
-        articles (List[Dict[str, Any]]): Candidate news articles retrieved from API or dataset.
+        headline: The user's submitted claim.
+        articles: List of articles retrieved from the news APIs.
 
     Output:
-        List[Dict[str, Any]]: The same list of articles, updated with:
-            - 'similarity_score': Float between 0.00 and 1.00 indicating semantic closeness.
-            - 'match_category': Label ('Strong Match', 'Moderate Match', 'Low Match').
-            Sorted descending by similarity score.
+        List of articles with 'similarity_score' (0.00 to 1.00) and 'match_category',
+        sorted descending by best corroborating source.
     """
-    # Guard against empty input or empty article list
     if not headline or not headline.strip() or not articles:
         return []
 
-    # Extract clean non-stop words from headline for concept recall
+    # Clean non-stop words from claim for keyword recall checking
     clean_tokens = [
         tok.lower().strip('.,-')
         for tok in re.findall(r'\b\w+\b', headline.lower())
@@ -60,7 +54,7 @@ def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Di
     except Exception:
         title_similarities = [0.0] * len(articles)
 
-    # Component 2: Title-to-FullContent TF-IDF Cosine Similarity
+    # Component 2: Title-to-Body TF-IDF Cosine Similarity
     text_vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), max_features=2000)
     try:
         text_vectors = text_vectorizer.fit_transform([headline] + article_full_texts)
@@ -73,7 +67,7 @@ def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Di
         title_sim = float(title_similarities[index])
         text_sim = float(text_similarities[index])
 
-        # Component 3: Keyword & Entity Recall
+        # Component 3: Concept & Entity Recall
         full_content_lower = f"{article.get('title', '')} {article.get('text', '')}".lower()
         if clean_tokens:
             matches_count = sum(1 for tok in clean_tokens if tok in full_content_lower)
@@ -81,13 +75,13 @@ def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Di
         else:
             keyword_ratio = 0.0
 
-        # Title match is given higher weight, combined with text depth and keyword recall
+        # Weighted combination: Title alignment (45%) + Body context (30%) + Entity recall (25%)
         raw_hybrid = max(
             title_sim * 1.15,
             (title_sim * 0.45) + (text_sim * 0.30) + (keyword_ratio * 0.25)
         )
 
-        # Non-linear NLP calibration: scale short query matches to realistic 0.00-1.00 spectrum
+        # NLP Calibration: scale short headline matches to realistic 0.00-1.00 spectrum
         if raw_hybrid > 0.05:
             calibrated_score = min(0.98, raw_hybrid * 1.45 + (keyword_ratio * 0.15))
         else:
@@ -95,7 +89,7 @@ def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Di
 
         normalized_score = max(0.0, min(1.0, round(calibrated_score, 2)))
 
-        # Categorize the match strength
+        # Qualitative match tier
         if normalized_score >= 0.45:
             match_category = "Strong Match"
         elif normalized_score >= 0.20:
@@ -108,6 +102,6 @@ def compute_similarity(headline: str, articles: List[Dict[str, Any]]) -> List[Di
         article_copy["match_category"] = match_category
         scored_articles.append(article_copy)
 
-    # Sort so strongest corroborating sources appear first
+    # Sort descending so top corroborating articles appear first
     scored_articles.sort(key=lambda item: item["similarity_score"], reverse=True)
     return scored_articles
