@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VeriClaim — Simple & Instant News Verification</title>
-  <meta name="description" content="Check any news headline or claim against 7 trusted global news services in seconds. Simple, fast, and easy to understand." />
+  <meta name="description" content="Check any news headline, claim, or web link against 7 trusted global news services in seconds. Simple, fast, and easy to understand." />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,6 +26,7 @@
           },
           animation: {
             'ticker': 'ticker 35s linear infinite',
+            'pulse-mic': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           },
           keyframes: {
             'ticker': {
@@ -110,6 +111,14 @@
       <!-- Right Controls -->
       <div class="flex items-center space-x-2">
         <button
+          onclick="toggleHistoryDrawer()"
+          class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm"
+          title="Recent Fact-Checks History"
+        >
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+
+        <button
           onclick="toggleDarkMode()"
           class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm"
           title="Toggle Dark/Light Mode"
@@ -167,11 +176,11 @@
     <section class="py-16 px-4 text-center max-w-4xl mx-auto space-y-6">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold border border-indigo-100 dark:border-indigo-800">
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Connected to 7 Live News Sources</span>
+        <span>7 Live Global News Wires Active</span>
       </div>
 
       <h1 class="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-        Check if any news headline or viral claim is true.
+        Check if any news headline, article link, or claim is true.
       </h1>
 
       <p class="text-slate-600 dark:text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
@@ -184,7 +193,7 @@
           class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
         >
           <i class="fa-solid fa-magnifying-glass"></i>
-          <span>Check a Headline Now</span>
+          <span>Check a Headline or Link</span>
         </button>
         <button
           onclick="goToPage('sources')"
@@ -204,8 +213,8 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
           <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center mx-auto text-sm">1</div>
-          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Type or Paste a Claim</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Enter any breaking headline, social media post, or forwarded message.</p>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Type, Paste Link, or Speak</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Enter any headline, paste any web news link, or speak your claim with your voice.</p>
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
@@ -237,16 +246,62 @@
         <div class="flex items-center justify-between">
           <label for="headlineInput" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-magnifying-glass text-indigo-600"></i>
-            <span>Enter a headline or claim to verify:</span>
+            <span>Enter a headline, paste a web article URL, or use your voice:</span>
           </label>
         </div>
 
-        <textarea
-          id="headlineInput"
-          rows="2"
-          placeholder="e.g. Nvidia reports record revenue growth in AI data center chips"
-          class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-        ></textarea>
+        <!-- Textarea with Microphone Button -->
+        <div class="relative">
+          <textarea
+            id="headlineInput"
+            rows="2"
+            oninput="handleInputDetection()"
+            placeholder="e.g. Nvidia reports record revenue growth in AI data center chips (or paste https://bbc.com/news/...)"
+            class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-3 pr-12 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+          ></textarea>
+
+          <!-- Voice Mic Button -->
+          <button
+            type="button"
+            onclick="toggleVoiceRecognition()"
+            id="micBtn"
+            class="absolute right-3 top-3 p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            title="Speak your claim (Voice Search)"
+          >
+            <i class="fa-solid fa-microphone text-base"></i>
+          </button>
+        </div>
+
+        <!-- URL Auto-Detection Banner -->
+        <div id="urlDetectedBanner" class="hidden p-2.5 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs flex items-center justify-between">
+          <div class="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-medium">
+            <i class="fa-solid fa-link"></i>
+            <span>Web Article URL detected. We will automatically extract the headline and verify it.</span>
+          </div>
+          <button onclick="scanPastedUrl()" class="px-2.5 py-1 bg-indigo-600 text-white rounded-lg font-bold text-[11px] hover:bg-indigo-700">
+            Extract & Check Now
+          </button>
+        </div>
+
+        <!-- Quick Filters Bar (Timeframe & Region) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-slate-400 font-semibold text-[11px]">Timeframe:</span>
+            <button onclick="setTimeframeFilter('all')" class="time-filter-btn px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold" data-val="all">All Time</button>
+            <button onclick="setTimeframeFilter('24h')" class="time-filter-btn px-2 py-0.5 rounded text-slate-500 hover:bg-slate-100" data-val="24h">Last 24h</button>
+            <button onclick="setTimeframeFilter('week')" class="time-filter-btn px-2 py-0.5 rounded text-slate-500 hover:bg-slate-100" data-val="week">Past Week</button>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-semibold text-[11px]">Region:</span>
+            <select id="regionSelect" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none">
+              <option value="global">Global (All Regions)</option>
+              <option value="us">United States / Americas</option>
+              <option value="uk">UK & Europe</option>
+              <option value="asia">Asia-Pacific</option>
+            </select>
+          </div>
+        </div>
 
         <!-- Quick Example Buttons -->
         <div>
@@ -345,8 +400,8 @@
                 Explanation will appear here...
               </p>
 
-              <!-- Quick Action Share & Copy Bar -->
-              <div class="flex items-center justify-center sm:justify-start gap-2 pt-1">
+              <!-- Quick Action Share & Download Bar -->
+              <div class="flex items-center justify-center sm:justify-start gap-2 pt-1 flex-wrap">
                 <button onclick="copyVerdictSummary()" id="copyVerdictBtn" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition-colors">
                   <i class="fa-regular fa-copy"></i>
                   <span>Copy Verdict</span>
@@ -355,9 +410,31 @@
                   <i class="fa-brands fa-whatsapp"></i>
                   <span>Share</span>
                 </button>
+                <button onclick="generateSocialFactCheckCard()" class="text-xs px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 font-semibold flex items-center gap-1.5 transition-colors">
+                  <i class="fa-solid fa-image"></i>
+                  <span>Download Fact-Check Card</span>
+                </button>
               </div>
             </div>
 
+          </div>
+
+          <!-- Editorial & Perspective Balance Meter -->
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex justify-between items-center text-[11px] mb-1.5">
+              <span class="font-bold text-slate-700 dark:text-slate-300">📊 Media Coverage Balance:</span>
+              <span id="biasBalanceSummary" class="text-slate-500">Cross-verified across multiple news categories</span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 flex overflow-hidden">
+              <div id="biasBarWire" class="bg-blue-500 h-full" style="width: 40%" title="Wire Services"></div>
+              <div id="biasBarPublic" class="bg-emerald-500 h-full" style="width: 35%" title="Public / Quality Newsrooms"></div>
+              <div id="biasBarBiz" class="bg-amber-500 h-full" style="width: 25%" title="Financial / Business"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> Wire Agencies (Reuters, AP)</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Quality News (BBC, Guardian)</span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Business / Tech (Bloomberg, FT)</span>
+            </div>
           </div>
 
         </div>
@@ -523,6 +600,35 @@
   </div>
 
   <!-- ========================================================================= -->
+  <!-- SIDE DRAWER: SAVED VERIFICATION HISTORY -->
+  <!-- ========================================================================= -->
+  <div id="historyDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col">
+    <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
+        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Recent Fact-Checks</h3>
+      </div>
+      <button onclick="toggleHistoryDrawer()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i class="fa-solid fa-xmark text-base"></i>
+      </button>
+    </div>
+
+    <div id="historyList" class="flex-grow overflow-y-auto py-4 space-y-2.5">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+      <button onclick="clearHistory()" class="w-full py-2 rounded-xl border border-red-200 dark:border-red-800 text-red-600 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors">
+        Clear History
+      </button>
+    </div>
+  </div>
+  <div id="historyBackdrop" onclick="toggleHistoryDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden"></div>
+
+  <!-- Hidden Canvas for Social Fact-Check Card Generation -->
+  <canvas id="factCheckCanvas" width="800" height="420" class="hidden"></canvas>
+
+  <!-- ========================================================================= -->
   <!-- SIMPLE FOOTER -->
   <!-- ========================================================================= -->
   <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400 mt-auto">
@@ -546,9 +652,14 @@
     };
 
     let currentData = null;
+    let isVoiceActive = false;
+    let voiceRecognition = null;
+    let currentTimeframe = 'all';
 
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      loadHistoryUI();
+      initVoiceRecognition();
     });
 
     function initTheme() {
@@ -591,7 +702,103 @@
       }
     }
 
-    // Helper: Formats Date nicely (e.g. "March 15, 2026", "2 days ago", or "Recent")
+    // URL Auto-Detection
+    function handleInputDetection() {
+      const val = document.getElementById('headlineInput').value.trim();
+      const banner = document.getElementById('urlDetectedBanner');
+      if (val.startsWith('http://') || val.startsWith('https://')) {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    async function scanPastedUrl() {
+      const val = document.getElementById('headlineInput').value.trim();
+      if (!val.startsWith('http://') && !val.startsWith('https://')) return;
+
+      document.getElementById('loadingState').classList.remove('hidden');
+      try {
+        const res = await fetch('/api/extract_url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: val })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.title) {
+            document.getElementById('headlineInput').value = data.title;
+            document.getElementById('urlDetectedBanner').classList.add('hidden');
+            runVerification();
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("URL extraction fallback", err);
+      }
+      runVerification();
+    }
+
+    // Voice Speech Recognition
+    function initVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        voiceRecognition = new SpeechRecognition();
+        voiceRecognition.continuous = false;
+        voiceRecognition.interimResults = false;
+        voiceRecognition.lang = 'en-US';
+
+        voiceRecognition.onresult = (e) => {
+          const transcript = e.results[0][0].transcript;
+          if (transcript) {
+            document.getElementById('headlineInput').value = transcript;
+            stopVoiceRecognition();
+            runVerification();
+          }
+        };
+
+        voiceRecognition.onerror = () => stopVoiceRecognition();
+        voiceRecognition.onend = () => stopVoiceRecognition();
+      }
+    }
+
+    function toggleVoiceRecognition() {
+      if (!voiceRecognition) {
+        alert("Voice recognition is not supported in this browser. Please try in Chrome or Edge.");
+        return;
+      }
+      if (isVoiceActive) {
+        stopVoiceRecognition();
+      } else {
+        startVoiceRecognition();
+      }
+    }
+
+    function startVoiceRecognition() {
+      isVoiceActive = true;
+      const btn = document.getElementById('micBtn');
+      btn.className = "absolute right-3 top-3 p-2 rounded-lg text-red-500 animate-pulse-mic";
+      voiceRecognition.start();
+    }
+
+    function stopVoiceRecognition() {
+      isVoiceActive = false;
+      const btn = document.getElementById('micBtn');
+      if (btn) btn.className = "absolute right-3 top-3 p-2 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors";
+    }
+
+    function setTimeframeFilter(val) {
+      currentTimeframe = val;
+      document.querySelectorAll('.time-filter-btn').forEach(b => {
+        if (b.getAttribute('data-val') === val) {
+          b.className = "time-filter-btn px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold";
+        } else {
+          b.className = "time-filter-btn px-2 py-0.5 rounded text-slate-500 hover:bg-slate-100";
+        }
+      });
+    }
+
+    // Formats Date nicely
     function formatPublicationDate(dateStr) {
       if (!dateStr) return { formatted: "Recently Published", isRecent: true };
       try {
@@ -615,9 +822,14 @@
     }
 
     async function runVerification() {
-      const headline = document.getElementById('headlineInput').value.trim();
+      let headline = document.getElementById('headlineInput').value.trim();
       if (!headline) {
-        alert("Please enter a headline to check.");
+        alert("Please enter a headline or claim to check.");
+        return;
+      }
+
+      if (headline.startsWith('http://') || headline.startsWith('https://')) {
+        await scanPastedUrl();
         return;
       }
 
@@ -638,6 +850,7 @@
         setTimeout(() => {
           document.getElementById('loadingState').classList.add('hidden');
           showResults(data);
+          saveToHistory(data);
         }, 300);
 
       } catch (err) {
@@ -701,6 +914,9 @@
 
       document.getElementById('articlesCount').textContent = (data.articles || []).length;
 
+      // Update Media Bias / Editorial Distribution Bar
+      updateMediaBalance(data.articles || []);
+
       // Render Articles with Date & Author
       renderArticles(data.articles || []);
       // Render Facts
@@ -709,6 +925,24 @@
       renderBreakdown(data.component_breakdown);
 
       document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function updateMediaBalance(articles) {
+      let wire = 0, pub = 0, biz = 0;
+      articles.forEach(a => {
+        const src = (a.source || "").toLowerCase();
+        if (src.includes('reuters') || src.includes('ap') || src.includes('afp') || a.source_badge === 'NewsAPI') wire++;
+        else if (src.includes('bloomberg') || src.includes('wsj') || src.includes('seeking') || src.includes('nasdaq') || src.includes('benzinga') || src.includes('financial')) biz++;
+        else pub++;
+      });
+      const total = wire + pub + biz || 1;
+      const wirePct = Math.round((wire / total) * 100);
+      const pubPct = Math.round((pub / total) * 100);
+      const bizPct = 100 - (wirePct + pubPct);
+
+      document.getElementById('biasBarWire').style.width = Math.max(5, wirePct) + '%';
+      document.getElementById('biasBarPublic').style.width = Math.max(5, pubPct) + '%';
+      document.getElementById('biasBarBiz').style.width = Math.max(5, bizPct) + '%';
     }
 
     function setDetailTab(tabName) {
@@ -820,6 +1054,153 @@
       if (!currentData) return;
       const text = encodeURIComponent(`🔍 VeriClaim Fact Check:\nClaim: "${currentData.headline}"\nVerdict: ${currentData.category} (${currentData.score}/100)\n${currentData.explanation}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    // Download Social Fact-Check Card as PNG image
+    function generateSocialFactCheckCard() {
+      if (!currentData) return;
+
+      const canvas = document.getElementById('factCheckCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, 800, 420);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 800, 420);
+
+      // Card Border
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(20, 20, 760, 380);
+
+      // Header Tag
+      ctx.fillStyle = '#6366f1';
+      ctx.fillRect(40, 40, 160, 32);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('VERICLAIM FACT-CHECK', 50, 61);
+
+      // Date Tag
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), 650, 60);
+
+      // Headline
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px sans-serif';
+      const words = currentData.headline.split(' ');
+      let line1 = '', line2 = '';
+      for (let w of words) {
+        if ((line1 + w).length < 45) line1 += w + ' ';
+        else line2 += w + ' ';
+      }
+      ctx.fillText('"' + line1.trim(), 40, 120);
+      if (line2) ctx.fillText(line2.trim() + '"', 40, 150);
+
+      // Truth Score Circle
+      const score = currentData.score;
+      const scoreColor = score >= 75 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+      ctx.beginPath();
+      ctx.arc(100, 250, 45, 0, 2 * Math.PI);
+      ctx.fillStyle = '#1e293b';
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = scoreColor;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px sans-serif';
+      ctx.fillText(score.toString(), 85, 258);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px sans-serif';
+      ctx.fillText('TRUTH SCORE', 70, 275);
+
+      // Verdict Box
+      ctx.fillStyle = scoreColor;
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText(currentData.category.toUpperCase(), 170, 240);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '13px sans-serif';
+      const expl = currentData.explanation.slice(0, 90) + '...';
+      ctx.fillText(expl, 170, 270);
+
+      // Corroborating sources footer
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      const srcText = (currentData.distinct_sources || []).join(' • ') || '7 Global News Wires';
+      ctx.fillText('Cross-verified across: ' + srcText, 40, 365);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `vericlaim_factcheck_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // History Logic
+    function saveToHistory(data) {
+      try {
+        let history = JSON.parse(localStorage.getItem('vericlaim_simple_history') || '[]');
+        history.unshift({
+          headline: data.headline,
+          score: data.score,
+          category: data.category,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        history = history.slice(0, 10);
+        localStorage.setItem('vericlaim_simple_history', JSON.stringify(history));
+        loadHistoryUI();
+      } catch (err) {
+        console.warn("History save error:", err);
+      }
+    }
+
+    function loadHistoryUI() {
+      const list = document.getElementById('historyList');
+      if (!list) return;
+
+      const history = JSON.parse(localStorage.getItem('vericlaim_simple_history') || '[]');
+      if (history.length === 0) {
+        list.innerHTML = '<p class="text-xs text-slate-400 py-6 text-center">No recent checks yet.</p>';
+        return;
+      }
+
+      list.innerHTML = '';
+      history.forEach(item => {
+        const bg = item.score >= 75 ? 'bg-emerald-100 text-emerald-800' : item.score >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+        list.innerHTML += `
+          <div onclick="restoreHistoryItem('${encodeURIComponent(item.headline)}')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 cursor-pointer transition-colors space-y-1">
+            <div class="flex justify-between items-center text-[10px]">
+              <span class="font-bold px-1.5 py-0.2 rounded ${bg}">${item.score}/100</span>
+              <span class="text-slate-400">${item.timestamp}</span>
+            </div>
+            <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2">${item.headline}</p>
+          </div>
+        `;
+      });
+    }
+
+    function restoreHistoryItem(encoded) {
+      const text = decodeURIComponent(encoded);
+      document.getElementById('headlineInput').value = text;
+      toggleHistoryDrawer();
+      runVerification();
+    }
+
+    function toggleHistoryDrawer() {
+      const drawer = document.getElementById('historyDrawer');
+      const backdrop = document.getElementById('historyBackdrop');
+      const isOpen = !drawer.classList.contains('translate-x-full');
+      drawer.classList.toggle('translate-x-full', isOpen);
+      backdrop.classList.toggle('hidden', isOpen);
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('vericlaim_simple_history');
+      loadHistoryUI();
     }
   </script>
 </body>

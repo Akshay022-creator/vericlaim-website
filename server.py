@@ -226,6 +226,62 @@ class HeadlineCheckerAPIHandler(SimpleHTTPRequestHandler):
                 self._send_json_response({"error": str(execution_error)}, status_code=500)
             return
 
+        if parsed_url.path == "/api/extract_url":
+            content_length = int(self.headers.get("Content-Length", 0))
+            request_body = self.rfile.read(content_length).decode("utf-8")
+
+            try:
+                import re
+                import requests
+                payload = json.loads(request_body) if request_body else {}
+                target_url = payload.get("url", "").strip()
+
+                if not target_url or not target_url.startswith(("http://", "https://")):
+                    self._send_json_response({"error": "Please provide a valid web URL starting with http:// or https://"}, status_code=400)
+                    return
+
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                }
+                resp = requests.get(target_url, headers=headers, timeout=6)
+                html_text = resp.text
+
+                # Extract OpenGraph title or standard title tag
+                og_title_match = re.search(r'<meta[^>]*property=["\']og:title["\'][^>]*content=["\']([^"\']+)["\']', html_text, re.IGNORECASE)
+                if not og_title_match:
+                    og_title_match = re.search(r'<meta[^>]*content=["\']([^"\']+)["\'][^>]*property=["\']og:title["\']', html_text, re.IGNORECASE)
+
+                title_tag_match = re.search(r'<title[^>]*>([^<]+)</title>', html_text, re.IGNORECASE)
+
+                if og_title_match:
+                    raw_title = og_title_match.group(1).strip()
+                elif title_tag_match:
+                    raw_title = title_tag_match.group(1).strip()
+                else:
+                    raw_title = ""
+
+                # Clean common suffixes like " | BBC News", " - The Guardian", " | Reuters"
+                clean_title = re.sub(r'\s*[\-\|\–\—]\s*(?:BBC News|The Guardian|Reuters|CNN|The New York Times|Bloomberg|Daily Mail|Fox News|NDTV|TechCrunch).*$', '', raw_title, flags=re.IGNORECASE).strip()
+
+                # Extract description
+                og_desc_match = re.search(r'<meta[^>]*property=["\']og:description["\'][^>]*content=["\']([^"\']+)["\']', html_text, re.IGNORECASE)
+                if not og_desc_match:
+                    og_desc_match = re.search(r'<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']+)["\']', html_text, re.IGNORECASE)
+                desc = og_desc_match.group(1).strip() if og_desc_match else ""
+
+                domain = urlparse(target_url).netloc.replace("www.", "")
+
+                self._send_json_response({
+                    "url": target_url,
+                    "title": clean_title if clean_title else raw_title,
+                    "description": desc,
+                    "source": domain.split(".")[0].capitalize() if domain else "Web Article",
+                    "domain": domain
+                })
+            except Exception as extract_err:
+                self._send_json_response({"error": f"Could not read article: {str(extract_err)}"}, status_code=500)
+            return
+
         self.send_error(404, "Endpoint not found")
 
 
