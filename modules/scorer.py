@@ -2,14 +2,14 @@
 Accurate & Stance-Aware Trust Score Calculator
 ----------------------------------------------
 PURPOSE:
-Accurately scores news claims from 0 to 100 with stance & debunk awareness:
-1. Debunk / Fact-Check Override:
-   If a news outlet explicitly published a fact-check debunking the claim,
+Accurately scores news claims from 0 to 100 with stance, debunk, and role contradiction awareness:
+1. Role / Fact Contradiction Override:
+   If reporting contradicts the core attribution (e.g. 'Modi is PM of Pakistan'),
+   the score is immediately 0/100 (False / Contradicted).
+2. Debunk / Fact-Check Override:
+   If a news outlet published a fact-check debunking the claim,
    the score is immediately 0/100 (Debunked False).
-2. Genuine Match Gate: An article only counts as supporting if similarity >= 0.35 and stance == 'supporting'.
-3. Low Top Match Cap:
-   - Top match < 0.25 -> Score strictly capped at 0 - 15 (False / Misleading).
-   - Top match < 0.45 -> Score strictly capped at 20 - 35 (Unverified).
+3. Genuine Match Gate: An article only counts as supporting if similarity >= 0.35 and stance == 'supporting'.
 """
 
 from typing import List, Dict, Any
@@ -39,6 +39,30 @@ def compute_corroboration_score(
                 "coverage_points": 0,
                 "depth_points": 0,
                 "fact_modifier": 0
+            }
+        }
+
+    # Check for active role contradictions (e.g. Modi is PM of Pakistan)
+    contradiction_articles = [
+        art for art in similarity_results
+        if art.get("stance") == "contradicting"
+    ]
+
+    if contradiction_articles:
+        reason = contradiction_articles[0].get("stance_reason", "Reporting contradicts this claim.")
+        src = contradiction_articles[0].get("source", "Major News Wires")
+        return {
+            "score": 0,
+            "category": "False / Contradicted",
+            "explanation": f"⚠️ Fact Contradiction ({src}): {reason}",
+            "match_count": 0,
+            "distinct_sources": [src],
+            "debunked": True,
+            "component_breakdown": {
+                "similarity_points": 0,
+                "coverage_points": 0,
+                "depth_points": 0,
+                "fact_modifier": -100
             }
         }
 
@@ -72,7 +96,7 @@ def compute_corroboration_score(
     # Filter for genuinely supporting articles
     genuinely_matching_articles = [
         art for art in similarity_results
-        if art.get("similarity_score", 0.0) >= 0.35 and art.get("stance") != "debunking"
+        if art.get("similarity_score", 0.0) >= 0.35 and art.get("stance") not in ["debunking", "contradicting"]
     ]
 
     top_match = genuinely_matching_articles[0].get("similarity_score", 0.0) if genuinely_matching_articles else 0.0
