@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeriClaim — 7-Provider Real-Time News Cross-Verification Engine</title>
-  <meta name="description" content="Cross-verify breaking news headlines and viral claims against 7 live global news providers with TF-IDF semantic matching, fact conflict auditing, and evidence-based Corroboration Scoring." />
+  <title>VeriClaim — Simple & Instant News Verification</title>
+  <meta name="description" content="Check any news headline or claim against 7 trusted global news services in seconds. Simple, fast, and easy to understand." />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +13,7 @@
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
   <script>
     tailwind.config = {
@@ -24,32 +24,11 @@
             sans: ['Inter', 'sans-serif'],
             heading: ['Outfit', 'sans-serif'],
           },
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81',
-            }
-          },
           animation: {
-            'gradient-x': 'gradient-x 8s ease infinite',
             'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'float': 'float 4s ease-in-out infinite',
-            'ticker': 'ticker 38s linear infinite',
+            'ticker': 'ticker 35s linear infinite',
           },
           keyframes: {
-            'gradient-x': {
-              '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
-              '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
-            },
-            'float': {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-6px)' },
-            },
             'ticker': {
               '0%': { transform: 'translateX(0)' },
               '100%': { transform: 'translateX(-50%)' },
@@ -61,57 +40,12 @@
   </script>
 
   <style>
-    :root {
-      --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #1e40af 70%, #0369a1 100%);
-    }
-
     .dark {
       color-scheme: dark;
     }
 
-    .hero-bg {
-      background: var(--hero-gradient);
-      background-size: 200% 200%;
-      animation: gradient-x 12s ease infinite;
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    .dark .glass-card {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .score-circle-bg {
-      stroke: #e2e8f0;
-    }
-    .dark .score-circle-bg {
-      stroke: #334155;
-    }
-
     .score-circle-bar {
-      transition: stroke-dashoffset 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.6s ease;
-    }
-
-    .glowing-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
-      pointer-events: none;
-      opacity: 0.25;
-      animation: float 6s ease-in-out infinite alternate;
-    }
-
-    .interactive-card {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .interactive-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.12), 0 8px 16px -8px rgba(0, 0, 0, 0.08);
+      transition: stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.5s ease;
     }
 
     .ticker-wrap {
@@ -131,9 +65,6 @@
       width: 6px;
       height: 6px;
     }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
     ::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 9999px;
@@ -141,270 +72,153 @@
     .dark ::-webkit-scrollbar-thumb {
       background: #475569;
     }
-
-    @media print {
-      header, footer, #inputCard, #presetsContainer, #howItWorks, .no-print, .ticker-wrap, nav {
-        display: none !important;
-      }
-      body {
-        background: white !important;
-        color: black !important;
-      }
-      #resultsDashboard {
-        display: block !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-    }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans transition-colors duration-200">
 
   <!-- ========================================================================= -->
-  <!-- TOP NAVIGATION HEADER & PAGE ROUTER -->
+  <!-- SIMPLE TOP NAVIGATION -->
   <!-- ========================================================================= -->
-  <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-40 shadow-xs transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
       <!-- Brand Logo -->
-      <div class="flex items-center space-x-3 cursor-pointer group" onclick="navigateToPage('home')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-          <i class="fa-solid fa-shield-halved text-lg"></i>
+      <div class="flex items-center space-x-2.5 cursor-pointer" onclick="goToPage('home')">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+          <i class="fa-solid fa-shield-halved text-base"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-heading font-extrabold text-xl text-slate-900 dark:text-white tracking-tight">VeriClaim</span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-              v2.5
-            </span>
-          </div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">7-Provider Live Cross-Verification</p>
+          <span class="font-heading font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">VeriClaim</span>
         </div>
       </div>
 
-      <!-- Navigation Links (Multi-Page Tabs) -->
-      <nav class="hidden md:flex items-center space-x-1 font-semibold text-xs">
-        <button onclick="navigateToPage('home')" id="nav-home" class="px-3.5 py-2 rounded-xl transition-colors bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
-          <i class="fa-solid fa-house mr-1.5"></i> Home
+      <!-- Navigation Tabs -->
+      <nav class="hidden sm:flex items-center space-x-1 font-semibold text-xs">
+        <button onclick="goToPage('home')" id="tab-home" class="px-3.5 py-2 rounded-xl transition-colors bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+          Home
         </button>
-        <button onclick="navigateToPage('verifier')" id="nav-verifier" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
-          <i class="fa-solid fa-magnifying-glass-chart mr-1.5"></i> Live Verifier
+        <button onclick="goToPage('verifier')" id="tab-verifier" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
+          Check News
         </button>
-        <button onclick="navigateToPage('trusted-sources')" id="nav-trusted-sources" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
-          <i class="fa-solid fa-building-columns mr-1.5"></i> Trusted Newsrooms
+        <button onclick="goToPage('sources')" id="tab-sources" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
+          Trusted Sources
         </button>
-        <button onclick="navigateToPage('methodology')" id="nav-methodology" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
-          <i class="fa-solid fa-calculator mr-1.5"></i> Methodology
+        <button onclick="goToPage('about')" id="tab-about" class="px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
+          How It Works
         </button>
       </nav>
 
-      <!-- Action Controls & Auth -->
-      <div class="flex items-center space-x-2.5">
-        <!-- Live API Telemetry Modal Trigger -->
+      <!-- Right Controls -->
+      <div class="flex items-center space-x-2">
         <button
-          onclick="openTelemetryModal()"
-          class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all"
-          title="View Live API Status & Telemetry"
-        >
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span id="headerProviderBadge">7 APIs Live</span>
-        </button>
-
-        <!-- History Drawer Trigger -->
-        <button
-          onclick="toggleHistoryDrawer()"
-          class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors text-sm"
-          title="Verification History"
-        >
-          <i class="fa-solid fa-clock-rotate-left"></i>
-        </button>
-
-        <!-- Dark / Light Mode Toggle -->
-        <button
-          id="themeToggleBtn"
           onclick="toggleDarkMode()"
-          class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors text-sm"
-          title="Toggle Theme"
+          class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm"
+          title="Toggle Dark/Light Mode"
         >
           <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
 
-        <!-- Auth Button / User Profile -->
-        <div id="authHeaderContainer">
-          <button
-            onclick="openAuthModal('signin')"
-            class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
-          >
-            <i class="fa-solid fa-user"></i>
-            <span>Sign In</span>
-          </button>
-        </div>
+        <button
+          onclick="goToPage('verifier')"
+          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
+          <span>Check a Claim</span>
+        </button>
       </div>
 
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- DYNAMIC LIVE BREAKING NEWS TICKER -->
+  <!-- SIMPLE LIVE TICKER -->
   <!-- ========================================================================= -->
-  <div class="bg-slate-900 text-slate-300 text-xs py-2 border-b border-slate-800 ticker-wrap relative z-30 flex items-center">
-    <div class="px-4 bg-indigo-600 text-white font-bold uppercase tracking-wider text-[10px] py-0.5 rounded-r-md flex items-center gap-1.5 flex-shrink-0 z-10 shadow-sm">
-      <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-      Trending Wires
+  <div class="bg-slate-900 text-slate-300 text-xs py-2 ticker-wrap border-b border-slate-800 flex items-center">
+    <div class="px-3 bg-indigo-600 text-white font-bold text-[10px] py-0.5 rounded-r-md flex-shrink-0 z-10 mr-3">
+      Trending Topics:
     </div>
-    <div class="ticker-move space-x-8 pl-4">
-      <span onclick="triggerVerifierWithPreset('nvidia')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        ⚡ <b>AI Hardware:</b> Nvidia reports record revenue growth in AI data center chips
+    <div class="ticker-move space-x-8">
+      <span onclick="checkPreset('nvidia')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        ⚡ <b>Tech:</b> Nvidia reports record revenue growth in AI data center chips
       </span>
-      <span onclick="triggerVerifierWithPreset('fed')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        📈 <b>Central Banks:</b> Federal Reserve cuts benchmark interest rate by 25 basis points
+      <span onclick="checkPreset('fed')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        📈 <b>Economy:</b> Federal Reserve cuts interest rate by 25 basis points
       </span>
-      <span onclick="triggerVerifierWithPreset('nasa')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        🚀 <b>Space:</b> NASA successfully lands Artemis robotic rover on Moon south pole
+      <span onclick="checkPreset('nasa')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        🚀 <b>Space:</b> NASA lands Artemis rover on Moon south pole
       </span>
-      <span onclick="triggerVerifierWithPreset('alphabet_conflict')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        ⚠️ <b>Fact Audit:</b> Alphabet announces $50 billion renewable investment (Audit Discrepancy)
+      <span onclick="checkPreset('alphabet_conflict')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        ⚠️ <b>Numbers Test:</b> Alphabet announces $50 billion renewable investment (Test wrong amount)
       </span>
-      <span onclick="triggerVerifierWithPreset('who')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        💉 <b>Global Health:</b> WHO approves universal malaria vaccine showing 85 percent efficacy
+      <span onclick="checkPreset('who')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        💉 <b>Health:</b> WHO approves malaria vaccine showing 85 percent efficacy
       </span>
-      <span onclick="triggerVerifierWithPreset('fabricated')" class="cursor-pointer hover:text-amber-300 transition-colors font-medium">
-        👽 <b>Disinformation Test:</b> Secret underground alien civilization beneath Antarctica ice sheet
+      <span onclick="checkPreset('fabricated')" class="cursor-pointer hover:text-indigo-300 transition-colors">
+        👽 <b>Fake News Test:</b> Underground alien civilization found beneath Antarctica ice
       </span>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 1: HOME / LANDING VIEW -->
+  <!-- PAGE 1: SIMPLE HOME PAGE -->
   <!-- ========================================================================= -->
-  <div id="page-home" class="page-view flex-grow">
+  <div id="page-home" class="page-container flex-grow">
     
-    <!-- Hero Section -->
-    <section class="hero-bg text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden text-center">
-      <div class="glowing-orb w-96 h-96 bg-sky-500 -top-20 -left-20"></div>
-      <div class="glowing-orb w-96 h-96 bg-indigo-500 -bottom-32 -right-20" style="animation-delay: -3s;"></div>
+    <!-- Hero Banner -->
+    <section class="py-16 px-4 text-center max-w-4xl mx-auto space-y-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold border border-indigo-100 dark:border-indigo-800">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Connected to 7 Live News Sources</span>
+      </div>
 
-      <div class="max-w-4xl mx-auto relative z-10 space-y-6">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-blue-100 shadow-sm animate-pulse-slow">
-          <i class="fa-solid fa-satellite-dish text-emerald-400"></i>
-          <span>7 Global News APIs Ingested in Parallel</span>
-        </div>
+      <h1 class="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        Check if any news headline or viral claim is true.
+      </h1>
 
-        <h1 class="font-heading text-4xl sm:text-6xl font-black tracking-tight leading-tight">
-          Automated News Verification & Fact-Auditing at Wire Speed
-        </h1>
+      <p class="text-slate-600 dark:text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
+        VeriClaim instantly searches <b>The Guardian, NewsAPI, BBC, Currents, and other major news outlets</b> at the same time to see if the story is confirmed and if the numbers match.
+      </p>
 
-        <p class="text-blue-100/90 text-base sm:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
-          VeriClaim aggregates reporting from <b>The Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, and WorldNews</b> to calculate an explainable Corroboration Score and detect subtle factual distortions.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <button
-            onclick="navigateToPage('verifier')"
-            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-600 to-sky-500 hover:from-blue-600 hover:via-indigo-700 hover:to-sky-600 text-white font-extrabold text-sm shadow-xl shadow-indigo-500/30 hover:scale-105 transition-all flex items-center justify-center gap-2"
-          >
-            <i class="fa-solid fa-bolt"></i>
-            <span>Launch Live Verifier</span>
-          </button>
-          
-          <button
-            onclick="navigateToPage('trusted-sources')"
-            class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
-          >
-            <i class="fa-solid fa-building-columns"></i>
-            <span>Explore Trusted Newsrooms</span>
-          </button>
-        </div>
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button
+          onclick="goToPage('verifier')"
+          class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Check a Headline Now</span>
+        </button>
+        <button
+          onclick="goToPage('sources')"
+          class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm hover:bg-slate-50 transition-colors"
+        >
+          View Trusted Sources
+        </button>
       </div>
     </section>
 
-    <!-- Live Stats Bar -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-lg text-center interactive-card">
-          <div class="text-3xl font-black text-indigo-600 dark:text-indigo-400 font-heading">7 Live</div>
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">Global News Wires Active</div>
-        </div>
-        <div class="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-lg text-center interactive-card">
-          <div class="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-heading">10,000+</div>
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">Newsrooms Indexed</div>
-        </div>
-        <div class="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-lg text-center interactive-card">
-          <div class="text-3xl font-black text-blue-600 dark:text-blue-400 font-heading">&lt; 1.2s</div>
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">Multithreaded Latency</div>
-        </div>
-        <div class="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-lg text-center interactive-card">
-          <div class="text-3xl font-black text-amber-500 font-heading">100%</div>
-          <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">Deterministic & Explainable</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Visual 4-Stage Architecture Pipeline -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">How It Works</span>
-        <h2 class="text-3xl font-bold font-heading text-slate-900 dark:text-white mt-1">
-          A Robust 5-Stage Verification Pipeline
-        </h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-          From raw claim to evidence-backed score, every calculation is transparent.
-        </p>
+    <!-- 3-Step Simple Guide -->
+    <section class="max-w-5xl mx-auto px-4 py-12 border-t border-slate-200 dark:border-slate-800">
+      <div class="text-center mb-8">
+        <h2 class="text-xl font-bold font-heading text-slate-900 dark:text-white">How to use VeriClaim in 3 easy steps</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 interactive-card">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 flex items-center justify-center font-bold text-lg">1</div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Fact Extractor</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Isolates topic keywords, monetary values ($/€), percentages, and dates.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center mx-auto text-sm">1</div>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Type or Paste a Claim</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Enter any breaking headline, social media post, or forwarded message.</p>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 interactive-card">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center font-bold text-lg">2</div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">7-API Search</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Simultaneously polls Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData & WorldNews.</p>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center mx-auto text-sm">2</div>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">We Search 7 News Outlets</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">We check real-time wire reporting from The Guardian, BBC, Reuters, and more.</p>
         </div>
 
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 interactive-card">
-          <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 flex items-center justify-center font-bold text-lg">3</div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">TF-IDF Similarity</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Computes vector cosine alignment between the claim and reported articles.</p>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 interactive-card">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center font-bold text-lg">4</div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Fact Audit Matrix</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Audits numbers and dates, penalizing subtle exaggerations (-35 pts).</p>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 interactive-card">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center font-bold text-lg">5</div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Corroboration Score</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Outputs 0–100 credibility rating and plain-English narrative explanation.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Trusted Wire Partners Showcase -->
-    <section class="bg-slate-100/70 dark:bg-slate-900/60 py-12 border-y border-slate-200 dark:border-slate-800">
-      <div class="max-w-6xl mx-auto px-4 text-center">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-6">
-          Aggregating Coverage Across World-Class Journalism
-        </h3>
-        <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-slate-400 font-bold text-sm">
-          <span>Reuters</span>
-          <span>•</span>
-          <span>Associated Press</span>
-          <span>•</span>
-          <span>The Guardian</span>
-          <span>•</span>
-          <span>BBC News</span>
-          <span>•</span>
-          <span>Bloomberg</span>
-          <span>•</span>
-          <span>Financial Times</span>
-          <span>•</span>
-          <span>Nature</span>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-center">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center mx-auto text-sm">3</div>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Get a Simple Truth Score</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">See if it's Verified True (Green), Partially True (Yellow), or False (Red).</p>
         </div>
       </div>
     </section>
@@ -412,154 +226,83 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 2: LIVE VERIFIER VIEW -->
+  <!-- PAGE 2: SIMPLE & CLEAN CHECK NEWS VERIFIER -->
   <!-- ========================================================================= -->
-  <div id="page-verifier" class="page-view flex-grow hidden">
+  <div id="page-verifier" class="page-container flex-grow hidden">
     
-    <!-- Hero Section -->
-    <section class="hero-bg text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div class="max-w-4xl mx-auto text-center relative z-10">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold mb-4 text-blue-100 shadow-sm animate-pulse-slow">
-          <i class="fa-solid fa-bolt-lightning text-amber-300"></i>
-          <span>7 Live Global News Providers Active • Concurrent Multithreaded Search</span>
-        </div>
-        <h1 class="font-heading text-3xl sm:text-5xl font-black tracking-tight mb-2">
-          Headline & Claim Verifier
-        </h1>
-        <p class="text-blue-100/90 text-sm max-w-xl mx-auto font-normal">
-          Cross-reference breaking headlines, numbers, and dates against thousands of global newsrooms in real-time.
-        </p>
-      </div>
-    </section>
-
-    <!-- Main Interaction Area -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 -mt-8 pb-16 flex-grow w-full z-20">
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
       
       <!-- Input Card -->
-      <div id="inputCard" class="glass-card rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 transition-all">
-        <div class="flex items-center justify-between mb-3">
-          <label for="headlineInput" class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <i class="fa-solid fa-magnifying-glass-chart text-indigo-500"></i>
-            <span>Enter any headline, claim, or news topic to verify:</span>
-          </label>
-          <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 hidden sm:inline-flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-            7 Live Providers Ready
-          </span>
-        </div>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
         
-        <div class="relative">
-          <textarea
-            id="headlineInput"
-            rows="3"
-            placeholder="e.g. Nvidia reports record revenue growth in AI data center chips"
-            class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/90 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner text-base"
-          ></textarea>
-          
-          <div class="absolute right-3 bottom-3 flex items-center gap-2 text-xs text-slate-400">
-            <button onclick="pasteFromClipboard()" class="hover:text-indigo-600 dark:hover:text-indigo-400 p-1" title="Paste from clipboard">
-              <i class="fa-regular fa-clipboard"></i>
+        <div class="flex items-center justify-between">
+          <label for="headlineInput" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-indigo-600"></i>
+            <span>Enter a headline or claim to verify:</span>
+          </label>
+        </div>
+
+        <textarea
+          id="headlineInput"
+          rows="2"
+          placeholder="e.g. Nvidia reports record revenue growth in AI data center chips"
+          class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+        ></textarea>
+
+        <!-- Quick Example Buttons -->
+        <div>
+          <span class="text-xs font-semibold text-slate-400 block mb-2">Try these quick examples:</span>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="checkPreset('nvidia')" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 font-medium">
+              🤖 Nvidia AI News (True)
+            </button>
+            <button onclick="checkPreset('fed')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200">
+              📈 Fed Rate Cut (True)
+            </button>
+            <button onclick="checkPreset('alphabet_conflict')" class="text-xs px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 font-medium">
+              ⚠️ Wrong Number Test ($50B vs $5B)
+            </button>
+            <button onclick="checkPreset('fabricated')" class="text-xs px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800 font-medium">
+              👽 Antarctica Aliens (Fake)
             </button>
           </div>
         </div>
 
-        <!-- Quick Presets -->
-        <div class="mt-4" id="presetsContainer">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-sparkles text-amber-500"></i>
-              <span>Quick Presets & Benchmark Test Cases:</span>
-            </span>
-            <span class="text-[11px] text-slate-400">Click to run immediately</span>
-          </div>
-
-          <div class="flex flex-wrap gap-2" id="presetsButtons">
-            <button onclick="loadPreset('nvidia')" class="text-xs bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-medium px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>🤖</span> <span>Nvidia AI Earnings (Live News)</span>
-            </button>
-            <button onclick="loadPreset('nasa')" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-700 dark:hover:text-indigo-300 text-slate-700 dark:text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>🚀</span> <span>NASA Artemis Rover (Verified)</span>
-            </button>
-            <button onclick="loadPreset('fed')" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-700 dark:hover:text-indigo-300 text-slate-700 dark:text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>📈</span> <span>Fed Rate Cut 25 bps (Verified)</span>
-            </button>
-            <button onclick="loadPreset('alphabet_conflict')" class="text-xs bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 font-medium px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-800 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>⚠️</span> <span>Alphabet $50B vs $5B (Fact Discrepancy)</span>
-            </button>
-            <button onclick="loadPreset('who')" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-700 dark:hover:text-indigo-300 text-slate-700 dark:text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>💉</span> <span>WHO Malaria Vaccine 85% (Verified)</span>
-            </button>
-            <button onclick="loadPreset('fabricated')" class="text-xs bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-200 font-medium px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-800 transition-all flex items-center gap-1.5 hover:scale-[1.02]">
-              <span>👽</span> <span>Antarctica Alien Base (Fabricated)</span>
-            </button>
-          </div>
+        <!-- Action Button -->
+        <div class="pt-2 flex justify-end">
+          <button
+            onclick="runVerification()"
+            class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2"
+          >
+            <i class="fa-solid fa-bolt text-xs"></i>
+            <span>Check Claim</span>
+          </button>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 w-full sm:w-auto">
-            <i class="fa-solid fa-network-wired text-indigo-500"></i>
-            <span>Parallel Search: <b class="text-slate-700 dark:text-slate-300">Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, WorldNews</b></span>
-          </div>
-
-          <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
-            <button
-              id="clearBtn"
-              onclick="clearInput()"
-              class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              Clear
-            </button>
-            
-            <button
-              id="verifyBtn"
-              onclick="verifyClaim()"
-              class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-700 hover:via-indigo-700 hover:to-sky-700 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all flex items-center justify-center space-x-2 hover:scale-[1.02]"
-            >
-              <i class="fa-solid fa-bolt"></i>
-              <span>Cross-Verify Across 7 APIs</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       <!-- Loading State -->
-      <div id="loadingState" class="hidden my-8 bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-lg text-center transition-all animate-pulse-slow">
-        <div class="inline-block animate-spin text-indigo-600 dark:text-indigo-400 text-4xl mb-4">
+      <div id="loadingState" class="hidden my-8 bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+        <div class="inline-block animate-spin text-indigo-600 text-3xl">
           <i class="fa-solid fa-circle-notch"></i>
         </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Querying 7 Real-Time Global News Providers...</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Running concurrent threads across Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData & WorldNews</p>
-        
-        <div class="max-w-2xl mx-auto grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] font-semibold">
-          <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-xl border border-indigo-100 dark:border-indigo-800">
-            <i class="fa-solid fa-filter block text-sm mb-1"></i> 1. Keywords
-          </div>
-          <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-xl border border-indigo-100 dark:border-indigo-800 animate-pulse">
-            <i class="fa-solid fa-satellite-dish block text-sm mb-1"></i> 2. 7-API Parallel
-          </div>
-          <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-xl border border-indigo-100 dark:border-indigo-800">
-            <i class="fa-solid fa-brain block text-sm mb-1"></i> 3. TF-IDF Match
-          </div>
-          <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-xl border border-indigo-100 dark:border-indigo-800">
-            <i class="fa-solid fa-scale-balanced block text-sm mb-1"></i> 4. Fact Audit
-          </div>
-          <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-xl border border-indigo-100 dark:border-indigo-800">
-            <i class="fa-solid fa-award block text-sm mb-1"></i> 5. Corroborate
-          </div>
-        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white">Searching 7 Major News Services...</h3>
+        <p class="text-xs text-slate-400">Checking Guardian, BBC, Reuters, and independent reporting wires...</p>
       </div>
 
-      <!-- Verification Results Dashboard -->
-      <div id="resultsDashboard" class="hidden mt-8 space-y-6">
+      <!-- Results Area -->
+      <div id="resultsDashboard" class="hidden space-y-6">
 
-        <!-- Executive Verdict Card -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 transition-colors">
-          <div class="flex flex-col md:flex-row items-center gap-8">
+        <!-- Main Verdict Box -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
+          
+          <div class="flex flex-col sm:flex-row items-center gap-6">
+            
+            <!-- Circular Score Meter -->
             <div class="flex flex-col items-center flex-shrink-0">
-              <div class="relative w-36 h-36">
+              <div class="relative w-28 h-28">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" class="score-circle-bg" stroke-width="10" fill="transparent" />
+                  <circle cx="60" cy="60" r="50" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="10" fill="transparent" />
                   <circle
                     id="scoreCircle"
                     cx="60"
@@ -575,204 +318,94 @@
                   />
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                  <span id="scoreNumber" class="font-heading text-4xl font-black text-slate-900 dark:text-white">--</span>
-                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">out of 100</span>
+                  <span id="scoreNumber" class="font-heading text-3xl font-black text-slate-900 dark:text-white">--</span>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase">Trust Score</span>
                 </div>
               </div>
-              <div id="scoreBadge" class="mt-3 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 shadow-sm">
-                Strongly Corroborated
-              </div>
             </div>
 
-            <div class="flex-grow space-y-3 text-center md:text-left w-full">
-              <div class="flex items-center justify-center md:justify-start gap-2 flex-wrap">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  Executive Verdict
+            <!-- Verdict Text -->
+            <div class="space-y-2 text-center sm:text-left flex-grow">
+              <div class="flex items-center justify-center sm:justify-start gap-2">
+                <span id="verdictBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  Verified True
                 </span>
-                <span id="factStatusBadge" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <i class="fa-solid fa-circle-check"></i> Key Facts Verified
-                </span>
-                <span id="telemetryBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                  7 Providers Queried
+                <span id="sourceCountTag" class="text-xs text-slate-500 font-medium">
+                  Found in 4 News Outlets
                 </span>
               </div>
 
-              <h2 id="verdictHeadline" class="font-heading text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                Claim is corroborated across independent newsrooms.
+              <h2 id="verdictHeadline" class="text-lg font-bold text-slate-900 dark:text-white">
+                This claim is confirmed by news reports.
               </h2>
 
-              <div class="bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 rounded-xl p-4 text-slate-700 dark:text-slate-300 text-sm leading-relaxed" id="narrativeText">
+              <p id="narrativeText" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
                 Explanation will appear here...
-              </div>
-
-              <div class="flex items-center justify-center md:justify-start gap-2 pt-1 no-print">
-                <button onclick="bookmarkCurrentReport()" id="bookmarkBtn" class="text-xs px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 font-medium transition-colors flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-regular fa-bookmark"></i>
-                  <span>Bookmark Report</span>
-                </button>
-                <button onclick="copySummaryToClipboard()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium transition-colors flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-regular fa-copy"></i>
-                  <span id="copyBtnText">Copy Report</span>
-                </button>
-                <button onclick="downloadMarkdownReport()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium transition-colors flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-file-arrow-down"></i>
-                  <span>Export Markdown</span>
-                </button>
-                <button onclick="window.print()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium transition-colors flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-print"></i>
-                  <span>Print / PDF</span>
-                </button>
-              </div>
+              </p>
             </div>
+
           </div>
 
-          <!-- 4 Metric Tiles -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200/80 dark:border-slate-800 interactive-card">
-              <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center justify-between">
-                <span>Independent Outlets</span>
-                <i class="fa-solid fa-newspaper text-slate-400 text-xs"></i>
-              </div>
-              <div id="sourceCountMetric" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">4 Outlets</div>
-            </div>
-
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200/80 dark:border-slate-800 interactive-card">
-              <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center justify-between">
-                <span>Top Similarity Match</span>
-                <i class="fa-solid fa-chart-line text-slate-400 text-xs"></i>
-              </div>
-              <div id="topSimilarityMetric" class="text-xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">68%</div>
-            </div>
-
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200/80 dark:border-slate-800 interactive-card">
-              <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center justify-between">
-                <span>Fact Consistency</span>
-                <i class="fa-solid fa-scale-balanced text-slate-400 text-xs"></i>
-              </div>
-              <div id="conflictMetric" class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">0 Conflicts</div>
-            </div>
-
-            <div class="p-3.5 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200/80 dark:border-slate-800 interactive-card">
-              <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center justify-between">
-                <span>Query Latency</span>
-                <i class="fa-solid fa-gauge-high text-slate-400 text-xs"></i>
-              </div>
-              <div id="latencyMetric" class="text-xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">840 ms</div>
-            </div>
-          </div>
         </div>
 
-        <!-- Audit Suite Tabs -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-          <div class="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto bg-slate-50/50 dark:bg-slate-950/40">
-            <button onclick="switchTab('sourcesTab')" id="sourcesTabBtn" class="px-5 py-3.5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 whitespace-nowrap flex items-center gap-2">
-              <i class="fa-regular fa-newspaper"></i>
-              <span>Real-Time Coverage (<span id="articlesCountBadge">0</span>)</span>
+        <!-- Clean Tabs for Details -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+          
+          <div class="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 text-xs font-bold">
+            <button onclick="setDetailTab('articles')" id="tabBtn-articles" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">
+              📰 Related News Stories (<span id="articlesCount">0</span>)
             </button>
-            <button onclick="switchTab('factsTab')" id="factsTabBtn" class="px-5 py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap flex items-center gap-2">
-              <i class="fa-solid fa-list-check"></i>
-              <span>Claim vs Reality Audit</span>
+            <button onclick="setDetailTab('facts')" id="tabBtn-facts" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+              🔍 Numbers & Facts Checked
             </button>
-            <button onclick="switchTab('chartTab')" id="chartTabBtn" class="px-5 py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap flex items-center gap-2">
-              <i class="fa-solid fa-chart-simple"></i>
-              <span>Publisher Similarity Chart</span>
-            </button>
-            <button onclick="switchTab('scoringTab')" id="scoringTabBtn" class="px-5 py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap flex items-center gap-2">
-              <i class="fa-solid fa-calculator"></i>
-              <span>Formula Breakdown</span>
-            </button>
-            <button onclick="switchTab('telemetryTab')" id="telemetryTabBtn" class="px-5 py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap flex items-center gap-2">
-              <i class="fa-solid fa-server"></i>
-              <span>Provider Telemetry</span>
+            <button onclick="setDetailTab('how')" id="tabBtn-how" class="px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+              📊 How Score Was Calculated
             </button>
           </div>
 
-          <!-- TAB 1: Coverage -->
-          <div id="sourcesTab" class="p-6">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-              <div>
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">Retrieved Multi-Provider News Coverage</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Live articles fetched across Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, and WorldNews.</p>
+          <!-- TAB 1: News Articles -->
+          <div id="tabContent-articles" class="p-6">
+            <div id="articlesList" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- TAB 2: Facts & Numbers -->
+          <div id="tabContent-facts" class="p-6 hidden space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Numbers & Details Audit</h4>
+            <div id="factsList" class="space-y-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- TAB 3: How Score Was Calculated -->
+          <div id="tabContent-how" class="p-6 hidden space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Simple 3-Part Scoring Breakdown</h4>
+            
+            <div class="space-y-3 text-xs">
+              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex justify-between items-center">
+                <div>
+                  <span class="font-bold text-slate-800 dark:text-slate-200 block">1. Story Matching</span>
+                  <span class="text-slate-500 text-[11px]">How closely the reported news matches the headline</span>
+                </div>
+                <span id="scoreStoryPts" class="font-mono font-bold text-indigo-600 text-sm">+45 pts</span>
               </div>
-              <div class="flex items-center gap-1.5 flex-wrap" id="providerFilterChips"></div>
-            </div>
-            <div id="articlesList" class="space-y-3"></div>
-          </div>
 
-          <!-- TAB 2: Claim vs Reality -->
-          <div id="factsTab" class="p-6 hidden">
-            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Claim vs. Reality Quantitative Audit Matrix</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Comparing specific numbers, monetary amounts, percentages, and dates in the claim against verified news wire reporting.</p>
-            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 mb-6">
-              <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300 border-collapse">
-                <thead>
-                  <tr class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-xs font-bold">
-                    <th class="p-3">Fact Element</th>
-                    <th class="p-3">Claim Cited</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3">Corroborating Wire</th>
-                    <th class="p-3">Audit Details</th>
-                  </tr>
-                </thead>
-                <tbody id="auditMatrixTable" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900"></tbody>
-              </table>
-            </div>
-            <div class="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Audit Verdict Summary</h4>
-              <div id="auditVerdictsContainer" class="space-y-2 text-sm"></div>
-            </div>
-          </div>
-
-          <!-- TAB 3: Chart -->
-          <div id="chartTab" class="p-6 hidden">
-            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Content Alignment Across Global Publishers</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">TF-IDF title & content vector cosine similarity comparing the user's claim to independent wire reporting.</p>
-            <div id="chartContainer" class="space-y-3 max-w-3xl"></div>
-          </div>
-
-          <!-- TAB 4: Formula -->
-          <div id="scoringTab" class="p-6 hidden">
-            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Transparent Multi-Factor Scoring Formula</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Our score is explainable and deterministic, evaluating content alignment, source diversity, and fact consistency.</p>
-            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-              <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300 border-collapse">
-                <thead>
-                  <tr class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-xs font-bold">
-                    <th class="p-3">Factor Component</th>
-                    <th class="p-3">Max Weight</th>
-                    <th class="p-3">Points Awarded</th>
-                    <th class="p-3">Calculation Logic</th>
-                  </tr>
-                </thead>
-                <tbody id="scoringBreakdownTable" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 5: Telemetry -->
-          <div id="telemetryTab" class="p-6 hidden">
-            <div class="flex items-center justify-between mb-3">
-              <div>
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">7-Provider Parallel Query Performance</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Real-time latency (ms) and article yield per news API wire.</p>
+              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex justify-between items-center">
+                <div>
+                  <span class="font-bold text-slate-800 dark:text-slate-200 block">2. Multiple News Outlets</span>
+                  <span class="text-slate-500 text-[11px]">More independent sources covering it = higher score</span>
+                </div>
+                <span id="scoreSourcesPts" class="font-mono font-bold text-indigo-600 text-sm">+30 pts</span>
               </div>
-              <button onclick="refreshProviderStatus()" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold hover:bg-indigo-100 transition-colors">
-                <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh Status
-              </button>
-            </div>
-            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-              <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300 border-collapse">
-                <thead>
-                  <tr class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-200 text-xs font-bold">
-                    <th class="p-3">News Provider</th>
-                    <th class="p-3">Type</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3">Latency (ms)</th>
-                    <th class="p-3">Articles Fetched</th>
-                  </tr>
-                </thead>
-                <tbody id="telemetryTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900"></tbody>
-              </table>
+
+              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex justify-between items-center">
+                <div>
+                  <span class="font-bold text-slate-800 dark:text-slate-200 block">3. Numbers & Facts Accuracy</span>
+                  <span class="text-slate-500 text-[11px]">Penalty if amounts or dates contradict reporting</span>
+                </div>
+                <span id="scoreFactsPts" class="font-mono font-bold text-emerald-600 text-sm">+10 pts</span>
+              </div>
             </div>
           </div>
 
@@ -785,590 +418,130 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 3: TRUSTED NEWSROOMS & CREDIBILITY DIRECTORY -->
+  <!-- PAGE 3: TRUSTED SOURCES DIRECTORY -->
   <!-- ========================================================================= -->
-  <div id="page-trusted-sources" class="page-view flex-grow hidden">
-    
-    <section class="bg-white dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-slate-800">
-      <div class="max-w-6xl mx-auto text-center space-y-3">
-        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Media Credibility Index</span>
-        <h1 class="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">
-          Verified Global Newsrooms Directory
-        </h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm max-w-2xl mx-auto">
-          Explore top global journalistic institutions, their editorial trust ratings, fact-checking records, and live API connection status in VeriClaim.
-        </p>
+  <div id="page-sources" class="page-container flex-grow hidden">
+    <section class="max-w-4xl mx-auto px-4 py-10 space-y-6">
+      <div class="text-center space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-heading font-black text-slate-900 dark:text-white">Trusted Global News Sources</h1>
+        <p class="text-xs text-slate-500">Major newsrooms searched to verify your claims</p>
+      </div>
 
-        <!-- Search & Filter Bar -->
-        <div class="pt-6 max-w-xl mx-auto flex items-center gap-2">
-          <div class="relative flex-grow">
-            <input
-              type="text"
-              id="sourceSearchInput"
-              oninput="filterTrustedSources()"
-              placeholder="Search newsroom (e.g. Reuters, BBC, Nature)..."
-              class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-2.5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">The Guardian</h3>
+            <span class="text-[11px] text-slate-400">Direct Live API Connected</span>
           </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 96/100 Trust</span>
         </div>
 
-        <!-- Category Filters -->
-        <div class="flex flex-wrap justify-center gap-2 pt-3">
-          <button onclick="setSourceCategory('all')" class="source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-xs" data-cat="all">All Outlets (16)</button>
-          <button onclick="setSourceCategory('wire')" class="source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="wire">Global Wire Services</button>
-          <button onclick="setSourceCategory('quality')" class="source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="quality">Quality Newsrooms</button>
-          <button onclick="setSourceCategory('science')" class="source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="science">Science & Research</button>
-          <button onclick="setSourceCategory('finance')" class="source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="finance">Financial & Business</button>
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Reuters</h3>
+            <span class="text-[11px] text-slate-400">International News Wire</span>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 99/100 Trust</span>
+        </div>
+
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Associated Press (AP)</h3>
+            <span class="text-[11px] text-slate-400">Global News Agency</span>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 99/100 Trust</span>
+        </div>
+
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">BBC News</h3>
+            <span class="text-[11px] text-slate-400">Public Broadcaster</span>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 97/100 Trust</span>
+        </div>
+
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Bloomberg</h3>
+            <span class="text-[11px] text-slate-400">Financial & Business Wire</span>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 96/100 Trust</span>
+        </div>
+
+        <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Nature & Science</h3>
+            <span class="text-[11px] text-slate-400">Scientific Journals</span>
+          </div>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">★ 99/100 Trust</span>
         </div>
       </div>
     </section>
-
-    <!-- Newsrooms Grid -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-      <div id="sourcesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Dynamically rendered via JS -->
-      </div>
-    </section>
-
   </div>
 
   <!-- ========================================================================= -->
-  <!-- PAGE 4: METHODOLOGY VIEW -->
+  <!-- PAGE 4: HOW IT WORKS (SIMPLE & EASY TO EXPLAIN) -->
   <!-- ========================================================================= -->
-  <div id="page-methodology" class="page-view flex-grow hidden">
-    
-    <section class="bg-white dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-slate-800">
-      <div class="max-w-4xl mx-auto text-center space-y-3">
-        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Mathematical Architecture</span>
-        <h1 class="text-3xl sm:text-5xl font-heading font-black text-slate-900 dark:text-white">
-          Verification Methodology & Scoring Logic
-        </h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm max-w-2xl mx-auto">
-          Learn how VeriClaim calculates deterministic, reproducible corroboration scores without opaque black-box models.
+  <div id="page-about" class="page-container flex-grow hidden">
+    <section class="max-w-3xl mx-auto px-4 py-10 space-y-6">
+      <div class="text-center space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-heading font-black text-slate-900 dark:text-white">How VeriClaim Works</h1>
+        <p class="text-xs text-slate-500">Simple explanation of our verification process</p>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 text-sm leading-relaxed">
+        <h3 class="font-bold text-base text-slate-900 dark:text-white">1. Live News Search</h3>
+        <p class="text-slate-600 dark:text-slate-400 text-xs">
+          When you enter a claim, we simultaneously search 7 global news wire services (The Guardian, NewsAPI, Currents, Mediastack, GNews, NewsData, and WorldNews) to find all recent stories about that topic.
+        </p>
+
+        <h3 class="font-bold text-base text-slate-900 dark:text-white">2. Story & Detail Comparison</h3>
+        <p class="text-slate-600 dark:text-slate-400 text-xs">
+          We compare what the news articles actually say against your submitted headline. If multiple trusted outlets report the same event, the score goes up.
+        </p>
+
+        <h3 class="font-bold text-base text-slate-900 dark:text-white">3. Catching Exaggerated Numbers</h3>
+        <p class="text-slate-600 dark:text-slate-400 text-xs">
+          Many fake news posts take a real story but exaggerate the numbers (e.g. claiming $50 billion instead of $5 billion). Our system checks specific numbers, dates, and percentages, applying an automatic penalty if numbers are wrong.
         </p>
       </div>
     </section>
-
-    <section class="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-      <!-- Section 1 -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center font-bold">
-            <i class="fa-solid fa-square-root-variable"></i>
-          </div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">1. Hybrid TF-IDF Vector Cosine Similarity</h2>
-        </div>
-        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-          TF-IDF (Term Frequency-Inverse Document Frequency) measures how important specific keywords are to a document relative to a corpus. The mathematical cosine angle $\theta$ between the claim vector $\vec{A}$ and article vector $\vec{B}$ is computed as:
-        </p>
-        <div class="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl font-mono text-xs text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-800 text-center">
-          Similarity(A, B) = cos(θ) = (A · B) / (||A|| * ||B||)
-        </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          Our hybrid algorithm combines <b>Title-to-Title alignment (45%)</b>, <b>Title-to-Body depth (30%)</b>, and <b>Concept entity recall (25%)</b> to achieve realistic calibration on short breaking news headlines.
-        </p>
-      </div>
-
-      <!-- Section 2 -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center font-bold">
-            <i class="fa-solid fa-scale-balanced"></i>
-          </div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Quantitative Fact-Discrepancy Formula</h2>
-        </div>
-        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-          Many misinformation claims share 90% of words with real reports but distort key quantities (e.g. claiming $50 billion instead of $5 billion). The discrepancy ratio $\Delta$ is calculated as:
-        </p>
-        <div class="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl font-mono text-xs text-emerald-600 dark:text-emerald-400 border border-slate-200 dark:border-slate-800 text-center">
-          Δ = |Value_claim - Value_wire| / max(Value_claim, Value_wire)
-        </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          If $\Delta > 0.15$ (a greater than 15% discrepancy in reported amounts), a fact conflict is flagged and a <b>-35 point penalty</b> is applied to prevent viral exaggerated claims from appearing credible.
-        </p>
-      </div>
-
-      <!-- Section 3 -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 flex items-center justify-center font-bold">
-            <i class="fa-solid fa-list-ol"></i>
-          </div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">3. Multi-Factor Scoring Weights</h2>
-        </div>
-        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-          <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-            <thead class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-bold">
-              <tr>
-                <th class="p-3">Component</th>
-                <th class="p-3">Weight</th>
-                <th class="p-3">Role</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              <tr>
-                <td class="p-3 font-semibold">Top Content Similarity</td>
-                <td class="p-3 font-mono font-bold text-indigo-600">45 pts</td>
-                <td class="p-3">Measures how closely the primary wire report mirrors the claim.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Multi-Source Breadth</td>
-                <td class="p-3 font-mono font-bold text-indigo-600">30 pts</td>
-                <td class="p-3">Rewards claims verified across 3+ independent news organizations.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Match Depth</td>
-                <td class="p-3 font-mono font-bold text-indigo-600">25 pts</td>
-                <td class="p-3">Evaluates consistent reporting quality across secondary outlets.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold">Fact Consistency</td>
-                <td class="p-3 font-mono font-bold text-emerald-600">±45 pts</td>
-                <td class="p-3">+10 bonus for confirmed numbers, -35 to -45 penalty for contradictions.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
   </div>
 
   <!-- ========================================================================= -->
-  <!-- SIGN IN / SIGN UP MODAL -->
+  <!-- SIMPLE FOOTER -->
   <!-- ========================================================================= -->
-  <div id="authModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6">
-      
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-          <span class="font-heading font-extrabold text-lg text-slate-900 dark:text-white">VeriClaim Account</span>
-        </div>
-        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- Tab Switcher -->
-      <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-bold">
-        <button onclick="switchAuthTab('signin')" id="authTabSignIn" class="w-1/2 py-2 rounded-lg bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs">
-          Sign In
-        </button>
-        <button onclick="switchAuthTab('signup')" id="authTabSignUp" class="w-1/2 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900">
-          Create Account
-        </button>
-      </div>
-
-      <!-- Quick Demo One-Click Logins -->
-      <div class="space-y-2">
-        <button onclick="demoSocialLogin('Google User')" class="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-xs text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 transition-colors shadow-2xs">
-          <i class="fa-brands fa-google text-red-500"></i>
-          <span>Continue with Google</span>
-        </button>
-        <button onclick="demoSocialLogin('GitHub User')" class="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-xs text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 transition-colors shadow-2xs">
-          <i class="fa-brands fa-github text-slate-900 dark:text-white"></i>
-          <span>Continue with GitHub</span>
-        </button>
-      </div>
-
-      <div class="flex items-center gap-2 text-slate-400 text-xs">
-        <div class="flex-grow h-px bg-slate-200 dark:bg-slate-800"></div>
-        <span>or with email</span>
-        <div class="flex-grow h-px bg-slate-200 dark:bg-slate-800"></div>
-      </div>
-
-      <!-- Form Inputs -->
-      <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
-        <div id="nameFieldGroup" class="hidden">
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Full Name</label>
-          <input type="text" id="authNameInput" placeholder="e.g. Akshay Kaushik" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-          <input type="email" id="authEmailInput" required placeholder="name@example.com" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
-          <input type="password" id="authPasswordInput" required placeholder="••••••••" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-
-        <button type="submit" id="authSubmitBtn" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all">
-          Sign In to VeriClaim
-        </button>
-      </form>
-
-      <p class="text-[11px] text-slate-400 text-center">
-        By signing in you gain unlimited fact checks, saved verification reports, and custom API key storage.
-      </p>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- USER PROFILE & BOOKMARKS DRAWER -->
-  <!-- ========================================================================= -->
-  <div id="profileDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col">
-    <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs" id="profileAvatarText">
-          AK
-        </div>
-        <div>
-          <h3 class="font-bold text-sm text-slate-900 dark:text-white" id="profileNameDisplay">User Profile</h3>
-          <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">Verified Analyst</span>
-        </div>
-      </div>
-      <button onclick="toggleProfileDrawer()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-    </div>
-
-    <!-- Bookmarks & Saved Reports -->
-    <div class="flex-grow overflow-y-auto py-4 space-y-4">
-      <div>
-        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-bookmark text-indigo-500"></i>
-          <span>Bookmarked Reports (<span id="bookmarkCount">0</span>)</span>
-        </h4>
-        <div id="bookmarksList" class="space-y-2 text-xs">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Logout & Settings -->
-    <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
-      <button onclick="logoutUser()" class="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors flex items-center justify-center gap-2">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        <span>Sign Out</span>
-      </button>
-    </div>
-  </div>
-
-  <div id="profileBackdrop" onclick="toggleProfileDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden"></div>
-
-  <!-- ========================================================================= -->
-  <!-- HISTORY DRAWER -->
-  <!-- ========================================================================= -->
-  <div id="historyDrawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col">
-    <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-clock-rotate-left text-indigo-600 dark:text-indigo-400"></i>
-        <h3 class="font-bold text-base text-slate-900 dark:text-white">Verification History</h3>
-      </div>
-      <button onclick="toggleHistoryDrawer()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-    </div>
-
-    <div id="historyList" class="flex-grow overflow-y-auto py-4 space-y-3"></div>
-
-    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
-      <button onclick="clearHistory()" class="w-full py-2 rounded-xl border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-semibold transition-colors">
-        Clear Verification History
-      </button>
-    </div>
-  </div>
-
-  <div id="historyBackdrop" onclick="toggleHistoryDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden"></div>
-
-  <!-- ========================================================================= -->
-  <!-- TELEMETRY MODAL -->
-  <!-- ========================================================================= -->
-  <div id="telemetryModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-          <h3 class="font-bold text-lg text-slate-900 dark:text-white">7 Live News Providers Telemetry</h3>
-        </div>
-        <button onclick="closeTelemetryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        All 7 news wire APIs are configured and queried simultaneously via ThreadPoolExecutor.
-      </p>
-
-      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 max-h-80">
-        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-          <thead class="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-bold">
-            <tr>
-              <th class="p-2.5">Provider</th>
-              <th class="p-2.5">Badge</th>
-              <th class="p-2.5">Key Status</th>
-              <th class="p-2.5">Coverage Type</th>
-            </tr>
-          </thead>
-          <tbody id="modalProvidersList" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-        </table>
-      </div>
-
-      <div class="flex justify-end pt-2">
-        <button onclick="closeTelemetryModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs text-slate-700 dark:text-slate-200">
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- FOOTER -->
-  <!-- ========================================================================= -->
-  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors mt-auto">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-shield-halved text-indigo-500"></i>
-        <span><b>VeriClaim v2.5</b> — 7-Provider Real-Time Cross-Verification & Fact-Auditing</span>
-      </div>
-      <div class="flex items-center gap-3 text-slate-400">
-        <span>The Guardian</span> • <span>NewsAPI</span> • <span>Currents</span> • <span>Mediastack</span> • <span>GNews</span> • <span>NewsData</span> • <span>WorldNews</span>
-      </div>
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400 mt-auto">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span><b>VeriClaim</b> — Instant News Cross-Verification</span>
+      <span>7 Live News Services Connected</span>
     </div>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- CLIENT LOGIC & DATA SOURCES -->
+  <!-- SIMPLE CLIENT SCRIPT -->
   <!-- ========================================================================= -->
   <script>
-    // 16 Curated Global Trusted Newsrooms Data
-    const TRUSTED_SOURCES = [
-      {
-        name: "Reuters",
-        category: "wire",
-        trustScore: 99,
-        bias: "Non-Partisan / Center",
-        founded: "1851",
-        description: "Global international wire standard with strict verification and zero editorial bias tolerance.",
-        coverageBadge: "Live via NewsAPI / Currents",
-        badgeColor: "#ff8000"
-      },
-      {
-        name: "Associated Press (AP)",
-        category: "wire",
-        trustScore: 99,
-        bias: "Non-Partisan / Center",
-        founded: "1846",
-        description: "Primary wire service powering thousands of independent global newsrooms and election tallies.",
-        coverageBadge: "Live via NewsAPI / GNews",
-        badgeColor: "#ef4444"
-      },
-      {
-        name: "The Guardian",
-        category: "quality",
-        trustScore: 96,
-        bias: "Investigative / Center-Left",
-        founded: "1821",
-        description: "Leading independent quality investigative reporting with direct live Open Platform API access in VeriClaim.",
-        coverageBadge: "Direct Guardian API Active",
-        badgeColor: "#052962"
-      },
-      {
-        name: "BBC News",
-        category: "quality",
-        trustScore: 97,
-        bias: "Public Trust / Center",
-        founded: "1922",
-        description: "World's largest public broadcasting service operating with global journalistic accuracy guidelines.",
-        coverageBadge: "Live via GNews / NewsData",
-        badgeColor: "#bb1919"
-      },
-      {
-        name: "Agence France-Presse (AFP)",
-        category: "wire",
-        trustScore: 98,
-        bias: "Global Wire Standard",
-        founded: "1835",
-        description: "World's oldest news agency with certified international fact-checking operations in 150+ countries.",
-        coverageBadge: "Live via Mediastack / NewsData",
-        badgeColor: "#2563eb"
-      },
-      {
-        name: "Bloomberg News",
-        category: "finance",
-        trustScore: 96,
-        bias: "Markets & Economics / Center",
-        founded: "1990",
-        description: "Leading financial wire and global data terminal for market, corporate, and economic fact-checking.",
-        coverageBadge: "Live via Currents / NewsAPI",
-        badgeColor: "#000000"
-      },
-      {
-        name: "Financial Times",
-        category: "finance",
-        trustScore: 96,
-        bias: "Global Business & Policy",
-        founded: "1888",
-        description: "International daily newspaper with a special emphasis on business, economic policy, and world affairs.",
-        coverageBadge: "Live via NewsData / WorldNews",
-        badgeColor: "#f3c1b1"
-      },
-      {
-        name: "The Wall Street Journal",
-        category: "finance",
-        trustScore: 94,
-        bias: "Business & Markets",
-        founded: "1889",
-        description: "Authoritative financial daily known for award-winning investigative business reporting.",
-        coverageBadge: "Live via NewsAPI / GNews",
-        badgeColor: "#0f172a"
-      },
-      {
-        name: "Nature Journal",
-        category: "science",
-        trustScore: 99,
-        bias: "Peer-Reviewed Scientific Standard",
-        founded: "1869",
-        description: "The world's leading multidisciplinary peer-reviewed scientific and medical research journal.",
-        coverageBadge: "Live via WorldNews / GNews",
-        badgeColor: "#e11d48"
-      },
-      {
-        name: "Science Magazine (AAAS)",
-        category: "science",
-        trustScore: 99,
-        bias: "Peer-Reviewed Research",
-        founded: "1880",
-        description: "Premier academic journal of the American Association for the Advancement of Science.",
-        coverageBadge: "Live via WorldNews / NewsAPI",
-        badgeColor: "#d97706"
-      },
-      {
-        name: "The Lancet",
-        category: "science",
-        trustScore: 99,
-        bias: "Medical & Clinical Trials",
-        founded: "1823",
-        description: "Top weekly peer-reviewed general medical journal for clinical trials and global health guidelines.",
-        coverageBadge: "Live via GNews / Currents",
-        badgeColor: "#0d9488"
-      },
-      {
-        name: "The New York Times",
-        category: "quality",
-        trustScore: 94,
-        bias: "Investigative / Center-Left",
-        founded: "1851",
-        description: "Winner of 137 Pulitzer Prizes with extensive worldwide investigative reporting networks.",
-        coverageBadge: "Live via NewsAPI / Currents",
-        badgeColor: "#1e293b"
-      },
-      {
-        name: "Deutsche Welle (DW)",
-        category: "quality",
-        trustScore: 95,
-        bias: "International Public Media",
-        founded: "1953",
-        description: "Germany's international public broadcaster providing fact-checked news in 32 languages.",
-        coverageBadge: "Live via NewsData / WorldNews",
-        badgeColor: "#0284c7"
-      },
-      {
-        name: "MIT Technology Review",
-        category: "science",
-        trustScore: 96,
-        bias: "Technology & AI Research",
-        founded: "1899",
-        description: "Authoritative media arm of MIT covering breakthroughs in artificial intelligence, biotech, and computing.",
-        coverageBadge: "Live via GNews / Currents",
-        badgeColor: "#7c3aed"
-      },
-      {
-        name: "NPR (National Public Radio)",
-        category: "quality",
-        trustScore: 95,
-        bias: "Public Trust Standard",
-        founded: "1970",
-        description: "American public non-profit media organization providing independent long-form investigative journalism.",
-        coverageBadge: "Live via NewsAPI / GNews",
-        badgeColor: "#059669"
-      },
-      {
-        name: "Al Jazeera English",
-        category: "quality",
-        trustScore: 91,
-        bias: "Global South & Middle East",
-        founded: "2006",
-        description: "International news channel providing on-the-ground reporting from underreported world regions.",
-        coverageBadge: "Live via WorldNews / NewsData",
-        badgeColor: "#ea580c"
-      }
-    ];
-
     const PRESETS = {
       nvidia: "Nvidia reports record revenue growth in AI data center chips",
+      fed: "Federal Reserve cuts interest rate by 25 basis points to 4.50 percent",
       nasa: "NASA successfully lands Artemis robotic rover on Moon south pole to search for water ice",
-      fed: "Federal Reserve cuts benchmark interest rate by 25 basis points to 4.50 percent",
       alphabet_conflict: "Alphabet announces $50 billion investment in renewable energy for data centers",
       who: "World Health Organization approves new universal malaria vaccine showing 85 percent efficacy",
       fabricated: "Scientists discover secret underground alien civilization beneath Antarctica ice sheet"
     };
 
-    let currentVerificationData = null;
-    let currentProviderFilter = 'all';
-    let currentSourceCategory = 'all';
-    let authMode = 'signin';
-    let currentUser = JSON.parse(localStorage.getItem('vericlaim_user') || 'null');
+    let currentData = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
-      renderTrustedSources();
-      loadHistoryUI();
-      loadBookmarksUI();
-      updateAuthHeader();
-      fetchProvidersStatus();
-
-      // Check URL hash routing
-      const hash = window.location.hash.replace('#', '') || 'home';
-      if (['home', 'verifier', 'trusted-sources', 'methodology'].includes(hash)) {
-        navigateToPage(hash);
-      }
     });
 
-    // Page Router
-    function navigateToPage(pageId) {
-      document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById('page-' + pageId);
-      if (target) {
-        target.classList.remove('hidden');
-        window.location.hash = pageId;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-
-      // Update Nav Button active styles
-      ['home', 'verifier', 'trusted-sources', 'methodology'].forEach(id => {
-        const btn = document.getElementById('nav-' + id);
-        if (btn) {
-          if (id === pageId) {
-            btn.className = "px-3.5 py-2 rounded-xl transition-colors bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400";
-          } else {
-            btn.className = "px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800";
-          }
-        }
-      });
-    }
-
-    function triggerVerifierWithPreset(presetKey) {
-      navigateToPage('verifier');
-      loadPreset(presetKey);
-    }
-
-    // Theme Logic
     function initTheme() {
-      const savedTheme = localStorage.getItem('vericlaim_theme') || 'light';
-      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      const isDark = localStorage.getItem('vericlaim_theme') === 'dark';
+      if (isDark) {
         document.documentElement.classList.add('dark');
         document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400';
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('themeIcon').className = 'fa-solid fa-moon';
       }
     }
 
@@ -1378,198 +551,36 @@
       document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
     }
 
-    // Render Trusted Sources Directory
-    function renderTrustedSources() {
-      const grid = document.getElementById('sourcesGrid');
-      if (!grid) return;
-      grid.innerHTML = '';
+    function goToPage(pageId) {
+      document.querySelectorAll('.page-container').forEach(el => el.classList.add('hidden'));
+      const page = document.getElementById('page-' + pageId);
+      if (page) page.classList.remove('hidden');
 
-      const query = (document.getElementById('sourceSearchInput') ? document.getElementById('sourceSearchInput').value : '').toLowerCase();
-
-      const filtered = TRUSTED_SOURCES.filter(s => {
-        const matchesCat = currentSourceCategory === 'all' || s.category === currentSourceCategory;
-        const matchesQuery = s.name.toLowerCase().includes(query) || s.description.toLowerCase().includes(query) || s.bias.toLowerCase().includes(query);
-        return matchesCat && matchesQuery;
-      });
-
-      if (filtered.length === 0) {
-        grid.innerHTML = '<p class="text-sm text-slate-500 py-12 text-center col-span-3">No newsrooms matching your search query.</p>';
-        return;
-      }
-
-      filtered.forEach(source => {
-        grid.innerHTML += `
-          <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all interactive-card flex flex-col justify-between space-y-4">
-            <div class="space-y-2">
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3 class="text-lg font-bold font-heading text-slate-900 dark:text-white">${source.name}</h3>
-                  <span class="text-[11px] text-slate-400 font-medium">Est. ${source.founded} • ${source.bias}</span>
-                </div>
-                <div class="flex flex-col items-end">
-                  <span class="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-                    ★ ${source.trustScore}/100
-                  </span>
-                  <span class="text-[10px] text-slate-400 uppercase font-semibold mt-0.5">Trust Score</span>
-                </div>
-              </div>
-
-              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">${source.description}</p>
-            </div>
-
-            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                ${source.coverageBadge}
-              </span>
-              <button onclick="triggerSearchForOutlet('${source.name}')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
-                <span>Verify Claim</span>
-                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function filterTrustedSources() {
-      renderTrustedSources();
-    }
-
-    function setSourceCategory(cat) {
-      currentSourceCategory = cat;
-      document.querySelectorAll('.source-cat-btn').forEach(btn => {
-        if (btn.getAttribute('data-cat') === cat) {
-          btn.className = "source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-xs";
-        } else {
-          btn.className = "source-cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+      ['home', 'verifier', 'sources', 'about'].forEach(id => {
+        const btn = document.getElementById('tab-' + id);
+        if (btn) {
+          if (id === pageId) {
+            btn.className = "px-3.5 py-2 rounded-xl transition-colors bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400";
+          } else {
+            btn.className = "px-3.5 py-2 rounded-xl transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800";
+          }
         }
       });
-      renderTrustedSources();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function triggerSearchForOutlet(outletName) {
-      navigateToPage('verifier');
-      document.getElementById('headlineInput').value = `${outletName} reports major developments in global technology and policy`;
-      verifyClaim();
-    }
-
-    // Preset Loader
-    function loadPreset(key) {
+    function checkPreset(key) {
+      goToPage('verifier');
       if (PRESETS[key]) {
         document.getElementById('headlineInput').value = PRESETS[key];
-        verifyClaim();
+        runVerification();
       }
     }
 
-    function clearInput() {
-      document.getElementById('headlineInput').value = '';
-      document.getElementById('resultsDashboard').classList.add('hidden');
-      currentVerificationData = null;
-    }
-
-    async function pasteFromClipboard() {
-      try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-          document.getElementById('headlineInput').value = text;
-        }
-      } catch (err) {
-        console.warn("Clipboard paste access denied");
-      }
-    }
-
-    // Tab Switcher inside Verifier
-    function switchTab(tabId) {
-      const tabs = ['sourcesTab', 'factsTab', 'chartTab', 'scoringTab', 'telemetryTab'];
-      const btns = ['sourcesTabBtn', 'factsTabBtn', 'chartTabBtn', 'scoringTabBtn', 'telemetryTabBtn'];
-
-      tabs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('hidden', id !== tabId);
-      });
-
-      btns.forEach(btnId => {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-          const isActive = btnId === tabId + 'Btn';
-          btn.className = isActive
-            ? 'px-5 py-3.5 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 whitespace-nowrap flex items-center gap-2'
-            : 'px-5 py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 whitespace-nowrap flex items-center gap-2';
-        }
-      });
-    }
-
-    // Telemetry Modal
-    async function fetchProvidersStatus() {
-      try {
-        const res = await fetch('/api/providers');
-        if (res.ok) {
-          const data = await res.json();
-          renderProvidersList(data.providers || []);
-        }
-      } catch (err) {
-        console.warn("Failed to fetch providers status", err);
-      }
-    }
-
-    function openTelemetryModal() {
-      fetchProvidersStatus();
-      document.getElementById('telemetryModal').classList.remove('hidden');
-    }
-
-    function closeTelemetryModal() {
-      document.getElementById('telemetryModal').classList.add('hidden');
-    }
-
-    function renderProvidersList(providers) {
-      const tbody = document.getElementById('modalProvidersList');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      providers.forEach(prov => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="p-2.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full ${prov.configured ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
-              ${prov.name}
-            </td>
-            <td class="p-2.5">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded text-white shadow-2xs" style="background-color: ${prov.color}">${prov.badge}</span>
-            </td>
-            <td class="p-2.5 font-mono text-[11px] text-slate-600 dark:text-slate-400">${prov.key_masked}</td>
-            <td class="p-2.5 text-slate-500 dark:text-slate-400">${prov.type}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // Animated Numeric Counter
-    function animateScoreCounter(targetScore) {
-      const scoreElement = document.getElementById('scoreNumber');
-      const duration = 1000;
-      const startTime = performance.now();
-
-      function updateCounter(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        const currentVal = Math.round(easeOut * targetScore);
-        scoreElement.textContent = currentVal;
-
-        if (progress < 1) {
-          requestAnimationFrame(updateCounter);
-        } else {
-          scoreElement.textContent = targetScore;
-        }
-      }
-      requestAnimationFrame(updateCounter);
-    }
-
-    // Verification Pipeline Caller
-    async function verifyClaim() {
+    async function runVerification() {
       const headline = document.getElementById('headlineInput').value.trim();
       if (!headline) {
-        alert("Please enter a headline or claim to verify.");
+        alert("Please enter a headline to check.");
         return;
       }
 
@@ -1577,594 +588,143 @@
       document.getElementById('resultsDashboard').classList.add('hidden');
 
       try {
-        const response = await fetch('/api/verify', {
+        const res = await fetch('/api/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ headline })
         });
 
-        if (!response.ok) {
-          throw new Error("Server verification request failed");
-        }
-
-        const data = await response.json();
-        currentVerificationData = data;
+        if (!res.ok) throw new Error("Verification failed");
+        const data = await res.json();
+        currentData = data;
 
         setTimeout(() => {
           document.getElementById('loadingState').classList.add('hidden');
-          renderDashboard(data);
-          saveToHistory(data);
+          showResults(data);
         }, 300);
 
       } catch (err) {
-        console.error("Verification error:", err);
         document.getElementById('loadingState').classList.add('hidden');
-        alert("Could not connect to verification server: " + err.message);
+        alert("Error connecting to verification server: " + err.message);
       }
     }
 
-    // Render Dashboard
-    function renderDashboard(data) {
+    function showResults(data) {
       document.getElementById('resultsDashboard').classList.remove('hidden');
 
       const score = data.score;
-      animateScoreCounter(score);
+      document.getElementById('scoreNumber').textContent = score;
 
+      // Update Circle
       const circle = document.getElementById('scoreCircle');
-      const circumference = 314.16;
-      const offset = circumference - (score / 100) * circumference;
+      const offset = 314.16 - (score / 100) * 314.16;
       circle.style.strokeDashoffset = offset;
 
-      let scoreColor = '#10B981';
-      let badgeBg = 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800';
-      
+      let scoreColor = '#10b981';
+      let badgeCls = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+
       if (score >= 75) {
-        scoreColor = '#10B981';
-        badgeBg = 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800';
+        scoreColor = '#10b981';
+        badgeCls = 'bg-emerald-100 text-emerald-800 border-emerald-200';
       } else if (score >= 50) {
-        scoreColor = '#F59E0B';
-        badgeBg = 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800';
+        scoreColor = '#f59e0b';
+        badgeCls = 'bg-amber-100 text-amber-800 border-amber-200';
       } else if (score >= 25) {
-        scoreColor = '#F97316';
-        badgeBg = 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200 border-orange-300 dark:border-orange-800';
+        scoreColor = '#f97316';
+        badgeCls = 'bg-orange-100 text-orange-800 border-orange-200';
       } else {
-        scoreColor = '#EF4444';
-        badgeBg = 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200 border-red-300 dark:border-red-800';
+        scoreColor = '#ef4444';
+        badgeCls = 'bg-red-100 text-red-800 border-red-200';
       }
 
       circle.style.stroke = scoreColor;
-      const badge = document.getElementById('scoreBadge');
+
+      const badge = document.getElementById('verdictBadge');
       badge.textContent = data.category;
-      badge.className = `mt-3 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${badgeBg}`;
+      badge.className = `text-xs font-bold px-3 py-1 rounded-full border ${badgeCls}`;
 
       document.getElementById('verdictHeadline').textContent = `${data.category} (${score}/100)`;
       document.getElementById('narrativeText').textContent = data.explanation;
 
-      const telemetry = data.telemetry || {};
-      const queryMs = telemetry.query_time_ms || telemetry.total_pipeline_time_ms || 450;
-      document.getElementById('latencyMetric').textContent = `${queryMs} ms`;
-      document.getElementById('telemetryBadge').textContent = `${telemetry.providers_responding || 7} Providers Responded`;
+      const sourceCount = (data.distinct_sources || []).length;
+      document.getElementById('sourceCountTag').textContent = `Found in ${sourceCount} independent newsroom${sourceCount === 1 ? '' : 's'}`;
 
-      const sourcesCount = data.distinct_sources ? data.distinct_sources.length : 0;
-      document.getElementById('sourceCountMetric').textContent = `${sourcesCount} Outlet${sourcesCount === 1 ? '' : 's'}`;
+      document.getElementById('articlesCount').textContent = (data.articles || []).length;
 
-      const topMatch = (data.articles && data.articles[0]) ? data.articles[0].similarity_score : 0;
-      document.getElementById('topSimilarityMetric').textContent = `${Math.round(topMatch * 100)}%`;
-
-      const hasConflicts = data.fact_check && data.fact_check.conflicts_found;
-      const conflictCount = (data.fact_check && data.fact_check.conflict_count) || 0;
-      const conflictEl = document.getElementById('conflictMetric');
-      const factStatusBadge = document.getElementById('factStatusBadge');
-
-      if (hasConflicts) {
-        conflictEl.textContent = `${conflictCount} Discrepanc${conflictCount === 1 ? 'y' : 'ies'}`;
-        conflictEl.className = 'text-xl font-extrabold text-red-600 dark:text-red-400 mt-1';
-        factStatusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-500"></i> <span class="text-red-700 dark:text-red-400">Fact Discrepancies Detected</span>';
-      } else {
-        conflictEl.textContent = '0 Conflicts';
-        conflictEl.className = 'text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1';
-        factStatusBadge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i> <span class="text-emerald-700 dark:text-emerald-400">Key Facts Verified</span>';
-      }
-
-      document.getElementById('articlesCountBadge').textContent = (data.articles || []).length;
-      renderProviderFilterChips(data.articles || []);
-      renderArticlesList(data.articles || []);
-      renderAuditMatrix(data.fact_check);
-      renderChart(data.articles || []);
-      renderScoringBreakdown(data.component_breakdown, topMatch, sourcesCount);
-      renderTelemetryTable(telemetry);
+      // Render Articles
+      renderArticles(data.articles || []);
+      // Render Facts
+      renderFacts(data.fact_check);
+      // Render Breakdown
+      renderBreakdown(data.component_breakdown);
 
       document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function renderProviderFilterChips(articles) {
-      const container = document.getElementById('providerFilterChips');
-      if (!container) return;
-
-      const providerCounts = { all: articles.length };
-      articles.forEach(a => {
-        const badge = a.source_badge || 'Other';
-        providerCounts[badge] = (providerCounts[badge] || 0) + 1;
+    function setDetailTab(tabName) {
+      ['articles', 'facts', 'how'].forEach(t => {
+        document.getElementById('tabContent-' + t).classList.toggle('hidden', t !== tabName);
+        const btn = document.getElementById('tabBtn-' + t);
+        if (t === tabName) {
+          btn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400";
+        } else {
+          btn.className = "px-5 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+        }
       });
-
-      let chipsHtml = `
-        <button onclick="filterArticles('all')" class="text-xs px-2.5 py-1 rounded-lg font-semibold transition-all ${currentProviderFilter === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">
-          All (${articles.length})
-        </button>
-      `;
-
-      Object.keys(providerCounts).forEach(badge => {
-        if (badge === 'all') return;
-        const count = providerCounts[badge];
-        const isActive = currentProviderFilter === badge;
-        chipsHtml += `
-          <button onclick="filterArticles('${badge}')" class="text-xs px-2.5 py-1 rounded-lg font-semibold transition-all ${isActive ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">
-            ${badge} (${count})
-          </button>
-        `;
-      });
-
-      container.innerHTML = chipsHtml;
     }
 
-    function filterArticles(badge) {
-      currentProviderFilter = badge;
-      renderProviderFilterChips(currentVerificationData.articles || []);
-      if (!currentVerificationData) return;
-
-      if (badge === 'all') {
-        renderArticlesList(currentVerificationData.articles);
-      } else {
-        const filtered = currentVerificationData.articles.filter(a => (a.source_badge || 'Other') === badge);
-        renderArticlesList(filtered);
-      }
-    }
-
-    function renderArticlesList(articles) {
+    function renderArticles(articles) {
       const container = document.getElementById('articlesList');
       container.innerHTML = '';
 
       if (!articles || articles.length === 0) {
-        container.innerHTML = '<p class="text-sm text-slate-500 dark:text-slate-400 py-6 text-center">No articles matching the selected provider filter.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">No news articles found for this topic.</p>';
         return;
       }
 
       articles.forEach(art => {
-        const matchPct = Math.round((art.similarity_score || 0) * 100);
-        let badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
-        if (matchPct >= 40) {
-          badgeClass = 'bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-800 font-bold';
-        } else if (matchPct >= 20) {
-          badgeClass = 'bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800';
-        }
-
-        const badgeName = art.source_badge || 'Wire';
-        let badgeColor = '#2563eb';
-        if (badgeName === 'Guardian') badgeColor = '#052962';
-        else if (badgeName === 'Currents') badgeColor = '#0d9488';
-        else if (badgeName === 'Mediastack') badgeColor = '#e11d48';
-        else if (badgeName === 'GNews') badgeColor = '#7c3aed';
-        else if (badgeName === 'NewsData') badgeColor = '#059669';
-        else if (badgeName === 'WorldNews') badgeColor = '#d97706';
-
         container.innerHTML += `
-          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 transition-all interactive-card">
-            <div class="flex items-start justify-between gap-4">
-              <div class="space-y-1.5 flex-grow">
-                <div class="flex items-center gap-2 flex-wrap text-xs">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white shadow-2xs" style="background-color: ${badgeColor}">
-                    ${badgeName}
-                  </span>
-                  <span class="px-2 py-0.5 rounded ${badgeClass}">${matchPct}% Match</span>
-                  <span class="font-semibold text-slate-700 dark:text-slate-300">
-                    <i class="fa-solid fa-newspaper text-slate-400 mr-1"></i>${art.source}
-                  </span>
-                  <span class="text-slate-400">• ${art.published_at ? art.published_at.slice(0, 10) : 'Recent'}</span>
-                </div>
-
-                <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">${art.title}</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">${art.text}</p>
-              </div>
-
-              ${art.url && art.url !== '#' ? `
-                <a href="${art.url}" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex-shrink-0 font-medium px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800 flex items-center gap-1 shadow-2xs hover:scale-105 transition-transform">
-                  <span>Source</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                </a>
-              ` : ''}
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-indigo-600 dark:text-indigo-400">${art.source}</span>
+              <span class="text-slate-400">${art.source_badge || 'News Wire'}</span>
             </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white">${art.title}</h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${art.text}</p>
+            ${art.url && art.url !== '#' ? `
+              <div class="pt-1">
+                <a href="${art.url}" target="_blank" class="text-[10px] font-semibold text-indigo-600 hover:underline">Read original article →</a>
+              </div>
+            ` : ''}
           </div>
         `;
       });
     }
 
-    function renderAuditMatrix(factCheck) {
-      const tableBody = document.getElementById('auditMatrixTable');
-      const verdictsContainer = document.getElementById('auditVerdictsContainer');
-      tableBody.innerHTML = '';
-      verdictsContainer.innerHTML = '';
-
-      if (!factCheck || !factCheck.audit_matrix || factCheck.audit_matrix.length === 0) {
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="5" class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
-              Claim is qualitative in nature (no specific numerical metrics, currencies, or dates were extracted to audit).
-            </td>
-          </tr>
-        `;
-      } else {
-        factCheck.audit_matrix.forEach(item => {
-          let statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Unconfirmed</span>';
-          if (item.status === 'verified') {
-            statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800"><i class="fa-solid fa-check mr-1"></i>Corroborated</span>';
-          } else if (item.status === 'conflict') {
-            statusBadge = '<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-800"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Discrepancy</span>';
-          }
-
-          tableBody.innerHTML += `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-              <td class="p-3 font-semibold text-slate-900 dark:text-white text-xs">${item.fact_type}</td>
-              <td class="p-3 font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">${item.claim_fact}</td>
-              <td class="p-3">${statusBadge}</td>
-              <td class="p-3 text-xs font-medium text-slate-800 dark:text-slate-200">${item.source}</td>
-              <td class="p-3 text-xs text-slate-600 dark:text-slate-400">${item.explanation}</td>
-            </tr>
-          `;
-        });
-      }
-
-      if (factCheck && factCheck.details) {
-        factCheck.details.forEach(det => {
-          const isConflict = det.includes('Discrepancy');
-          const isVerified = det.includes('Verified');
-          const cls = isConflict
-            ? 'p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 font-medium'
-            : isVerified
-            ? 'p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 font-medium'
-            : 'p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
-          verdictsContainer.innerHTML += `<div class="${cls}">${det}</div>`;
-        });
-      }
-    }
-
-    function renderChart(articles) {
-      const container = document.getElementById('chartContainer');
+    function renderFacts(factCheck) {
+      const container = document.getElementById('factsList');
       container.innerHTML = '';
 
-      if (!articles || articles.length === 0) {
-        container.innerHTML = '<p class="text-sm text-slate-500">No matching sources to graph.</p>';
+      if (!factCheck || !factCheck.details || factCheck.details.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-2">No specific numbers or dates found in this claim to cross-check.</p>';
         return;
       }
 
-      articles.slice(0, 6).forEach(art => {
-        const pct = Math.round((art.similarity_score || 0) * 100);
-        let barColor = 'bg-indigo-600';
-        if (pct >= 40) barColor = 'bg-emerald-500';
-        else if (pct >= 20) barColor = 'bg-indigo-500';
-        else barColor = 'bg-slate-400';
-
-        container.innerHTML += `
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
-              <span class="flex items-center gap-1.5">
-                <span class="font-bold text-slate-900 dark:text-white">${art.source}</span>
-                <span class="text-[10px] text-slate-400">(${art.source_badge || 'Wire'})</span>
-              </span>
-              <span class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">${pct}% Similarity</span>
-            </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
-              <div class="${barColor} h-3 rounded-full transition-all duration-700" style="width: ${Math.max(4, pct)}%"></div>
-            </div>
-          </div>
-        `;
+      factCheck.details.forEach(det => {
+        const isConflict = det.includes('Discrepancy');
+        const isVerified = det.includes('Verified');
+        const cls = isConflict ? 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200' : isVerified ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200';
+        container.innerHTML += `<div class="p-3 rounded-xl border text-xs font-medium ${cls}">${det}</div>`;
       });
     }
 
-    function renderScoringBreakdown(breakdown, topMatch, sourcesCount) {
-      const table = document.getElementById('scoringBreakdownTable');
+    function renderBreakdown(breakdown) {
       breakdown = breakdown || {};
-
-      table.innerHTML = `
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="p-3 font-semibold text-xs">1. Top Content Similarity</td>
-          <td class="p-3 text-xs">45 pts</td>
-          <td class="p-3 font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">+${breakdown.similarity_points || 0}</td>
-          <td class="p-3 text-xs">Strongest article semantic TF-IDF overlap (${Math.round(topMatch * 100)}%)</td>
-        </tr>
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="p-3 font-semibold text-xs">2. Multi-Source Coverage</td>
-          <td class="p-3 text-xs">30 pts</td>
-          <td class="p-3 font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">+${breakdown.coverage_points || 0}</td>
-          <td class="p-3 text-xs">Confirmed across ${sourcesCount} independent news organizations</td>
-        </tr>
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="p-3 font-semibold text-xs">3. Match Depth & Consistency</td>
-          <td class="p-3 text-xs">25 pts</td>
-          <td class="p-3 font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs">+${breakdown.depth_points || 0}</td>
-          <td class="p-3 text-xs">Consistency of top supporting reporting across wires</td>
-        </tr>
-        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="p-3 font-semibold text-xs">4. Fact-Check Consistency Modifier</td>
-          <td class="p-3 text-xs">±45 pts</td>
-          <td class="p-3 font-mono font-bold ${breakdown.fact_modifier < 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'} text-xs">${breakdown.fact_modifier >= 0 ? '+' : ''}${breakdown.fact_modifier || 0}</td>
-          <td class="p-3 text-xs">${breakdown.fact_modifier < 0 ? 'Severe penalty for distorted/contradictory figures' : breakdown.fact_modifier > 0 ? 'Bonus awarded for verified facts' : 'Neutral qualitative check'}</td>
-        </tr>
-      `;
-    }
-
-    function renderTelemetryTable(telemetry) {
-      const tbody = document.getElementById('telemetryTableBody');
-      tbody.innerHTML = '';
-
-      const details = telemetry.provider_details || {};
-      Object.keys(details).forEach(pid => {
-        const item = details[pid];
-        const isOk = item.status === 'online';
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-            <td class="p-3 font-bold text-slate-900 dark:text-white text-xs">${item.name}</td>
-            <td class="p-3 text-xs text-slate-500 dark:text-slate-400">${pid}</td>
-            <td class="p-3">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isOk ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">
-                ${item.status}
-              </span>
-            </td>
-            <td class="p-3 font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">${item.latency_ms} ms</td>
-            <td class="p-3 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">${item.articles_found} articles</td>
-          </tr>
-        `;
-      });
-    }
-
-    // History Logic
-    function saveToHistory(data) {
-      try {
-        let history = JSON.parse(localStorage.getItem('vericlaim_history') || '[]');
-        history.unshift({
-          headline: data.headline,
-          score: data.score,
-          category: data.category,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        });
-        history = history.slice(0, 15);
-        localStorage.setItem('vericlaim_history', JSON.stringify(history));
-        loadHistoryUI();
-      } catch (err) {
-        console.warn("History save error:", err);
-      }
-    }
-
-    function loadHistoryUI() {
-      const listContainer = document.getElementById('historyList');
-      if (!listContainer) return;
-      
-      const history = JSON.parse(localStorage.getItem('vericlaim_history') || '[]');
-      if (history.length === 0) {
-        listContainer.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">No recent verifications yet.</p>';
-        return;
-      }
-
-      listContainer.innerHTML = '';
-      history.forEach((item) => {
-        let scoreBg = item.score >= 75 ? 'bg-emerald-100 text-emerald-800' : item.score >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
-        listContainer.innerHTML += `
-          <div onclick="restoreHistoryItem('${encodeURIComponent(item.headline)}')" class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 cursor-pointer transition-all space-y-1">
-            <div class="flex items-center justify-between text-[11px]">
-              <span class="font-bold px-2 py-0.5 rounded-full ${scoreBg}">${item.score}/100</span>
-              <span class="text-slate-400">${item.timestamp}</span>
-            </div>
-            <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2">${item.headline}</p>
-          </div>
-        `;
-      });
-    }
-
-    function restoreHistoryItem(encodedHeadline) {
-      const headline = decodeURIComponent(encodedHeadline);
-      navigateToPage('verifier');
-      document.getElementById('headlineInput').value = headline;
-      toggleHistoryDrawer();
-      verifyClaim();
-    }
-
-    function toggleHistoryDrawer() {
-      const drawer = document.getElementById('historyDrawer');
-      const backdrop = document.getElementById('historyBackdrop');
-      const isOpen = !drawer.classList.contains('translate-x-full');
-
-      if (isOpen) {
-        drawer.classList.add('translate-x-full');
-        backdrop.classList.add('hidden');
-      } else {
-        drawer.classList.remove('translate-x-full');
-        backdrop.classList.remove('hidden');
-      }
-    }
-
-    function clearHistory() {
-      localStorage.removeItem('vericlaim_history');
-      loadHistoryUI();
-    }
-
-    // Bookmarks Logic
-    function bookmarkCurrentReport() {
-      if (!currentVerificationData) return;
-      let bookmarks = JSON.parse(localStorage.getItem('vericlaim_bookmarks') || '[]');
-      const exists = bookmarks.some(b => b.headline === currentVerificationData.headline);
-      if (!exists) {
-        bookmarks.unshift({
-          headline: currentVerificationData.headline,
-          score: currentVerificationData.score,
-          category: currentVerificationData.category,
-          date: new Date().toLocaleDateString()
-        });
-        localStorage.setItem('vericlaim_bookmarks', JSON.stringify(bookmarks));
-        loadBookmarksUI();
-        alert("Report bookmarked to your profile!");
-      } else {
-        alert("This report is already in your bookmarks.");
-      }
-    }
-
-    function loadBookmarksUI() {
-      const list = document.getElementById('bookmarksList');
-      const countEl = document.getElementById('bookmarkCount');
-      if (!list) return;
-
-      const bookmarks = JSON.parse(localStorage.getItem('vericlaim_bookmarks') || '[]');
-      if (countEl) countEl.textContent = bookmarks.length;
-
-      if (bookmarks.length === 0) {
-        list.innerHTML = '<p class="text-slate-400 py-2">No bookmarked reports yet.</p>';
-        return;
-      }
-
-      list.innerHTML = '';
-      bookmarks.forEach(b => {
-        list.innerHTML += `
-          <div class="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 space-y-1">
-            <div class="flex justify-between items-center text-[10px]">
-              <span class="font-bold text-indigo-600">${b.score}/100 (${b.category})</span>
-              <span class="text-slate-400">${b.date}</span>
-            </div>
-            <p class="text-slate-800 dark:text-slate-200 font-medium line-clamp-2">${b.headline}</p>
-          </div>
-        `;
-      });
-    }
-
-    // Auth Suite Logic
-    function openAuthModal(mode) {
-      authMode = mode || 'signin';
-      switchAuthTab(authMode);
-      document.getElementById('authModal').classList.remove('hidden');
-    }
-
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.add('hidden');
-    }
-
-    function switchAuthTab(mode) {
-      authMode = mode;
-      const nameGroup = document.getElementById('nameFieldGroup');
-      const submitBtn = document.getElementById('authSubmitBtn');
-      const tabSignIn = document.getElementById('authTabSignIn');
-      const tabSignUp = document.getElementById('authTabSignUp');
-
-      if (mode === 'signup') {
-        nameGroup.classList.remove('hidden');
-        submitBtn.textContent = "Create Free Account";
-        tabSignUp.className = "w-1/2 py-2 rounded-lg bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs";
-        tabSignIn.className = "w-1/2 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900";
-      } else {
-        nameGroup.classList.add('hidden');
-        submitBtn.textContent = "Sign In to VeriClaim";
-        tabSignIn.className = "w-1/2 py-2 rounded-lg bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs";
-        tabSignUp.className = "w-1/2 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900";
-      }
-    }
-
-    function handleAuthSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('authEmailInput').value.trim();
-      const name = document.getElementById('authNameInput').value.trim() || email.split('@')[0];
-
-      currentUser = { name, email };
-      localStorage.setItem('vericlaim_user', JSON.stringify(currentUser));
-      updateAuthHeader();
-      closeAuthModal();
-    }
-
-    function demoSocialLogin(providerName) {
-      currentUser = { name: "Akshay Kaushik", email: "akshay@example.com", provider: providerName };
-      localStorage.setItem('vericlaim_user', JSON.stringify(currentUser));
-      updateAuthHeader();
-      closeAuthModal();
-    }
-
-    function updateAuthHeader() {
-      const container = document.getElementById('authHeaderContainer');
-      if (!container) return;
-
-      if (currentUser) {
-        const initials = currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AK';
-        container.innerHTML = `
-          <button onclick="toggleProfileDrawer()" class="flex items-center gap-2 p-1 pl-2 pr-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 transition-colors">
-            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black">${initials}</span>
-            <span class="hidden sm:inline">${currentUser.name.split(' ')[0]}</span>
-          </button>
-        `;
-        document.getElementById('profileNameDisplay').textContent = currentUser.name;
-        document.getElementById('profileAvatarText').textContent = initials;
-      } else {
-        container.innerHTML = `
-          <button onclick="openAuthModal('signin')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-user"></i>
-            <span>Sign In</span>
-          </button>
-        `;
-      }
-    }
-
-    function logoutUser() {
-      currentUser = null;
-      localStorage.removeItem('vericlaim_user');
-      updateAuthHeader();
-      toggleProfileDrawer();
-    }
-
-    function toggleProfileDrawer() {
-      const drawer = document.getElementById('profileDrawer');
-      const backdrop = document.getElementById('profileBackdrop');
-      const isOpen = !drawer.classList.contains('translate-x-full');
-
-      if (isOpen) {
-        drawer.classList.add('translate-x-full');
-        backdrop.classList.add('hidden');
-      } else {
-        drawer.classList.remove('translate-x-full');
-        backdrop.classList.remove('hidden');
-      }
-    }
-
-    // Export Helpers
-    function copySummaryToClipboard() {
-      if (!currentVerificationData) return;
-      const md = generateMarkdownSummary(currentVerificationData);
-      navigator.clipboard.writeText(md).then(() => {
-        const btnText = document.getElementById('copyBtnText');
-        btnText.textContent = "Copied!";
-        setTimeout(() => { btnText.textContent = "Copy Report"; }, 2000);
-      });
-    }
-
-    function downloadMarkdownReport() {
-      if (!currentVerificationData) return;
-      const md = generateMarkdownSummary(currentVerificationData);
-      const blob = new Blob([md], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vericlaim_report_${Date.now()}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function generateMarkdownSummary(data) {
-      return `# VeriClaim Cross-Verification Report
-**Claim:** "${data.headline}"
-**Score:** ${data.score}/100 (${data.category})
-**Corroborating Outlets:** ${data.distinct_sources ? data.distinct_sources.join(', ') : 'None'}
-
-## Executive Explanation
-${data.explanation}
-
-## Multi-Provider Telemetry
-${data.providers_summary || '7 Live Providers Queried'}
-
----
-*Generated by VeriClaim v2.5 — 7-Provider Real-Time Cross-Verification Engine*
-`;
+      document.getElementById('scoreStoryPts').textContent = `+${breakdown.similarity_points || 0} pts`;
+      document.getElementById('scoreSourcesPts').textContent = `+${breakdown.coverage_points || 0} pts`;
+      const factMod = breakdown.fact_modifier || 0;
+      document.getElementById('scoreFactsPts').textContent = `${factMod >= 0 ? '+' : ''}${factMod} pts`;
+      document.getElementById('scoreFactsPts').className = `font-mono font-bold text-sm ${factMod < 0 ? 'text-red-600' : 'text-emerald-600'}`;
     }
   </script>
 </body>
